@@ -71,28 +71,36 @@ Nous serions ravis que vous contribuiez à ce projet, même si vous débutez sur
 
 3. **Cloner le projet sur votre ordinateur**  
    Ouvrez un terminal et clonez votre fork avec la commande `git clone`, puis placez-vous dans le dossier du projet :  
-   `git clone https://github.com/<votre_nom_utilisateur>/alumnis-map.git`  
-   `cd alumnis-map`  
+   ```bash
+   git clone https://github.com/<votre_nom_utilisateur>/alumnis-map.git  
+   cd alumnis-map
+   ```
    Remplacez `<votre_nom_utilisateur>` par votre nom d'utilisateur GitHub.*
 
-4. **Créer une branche pour vos modifications**  
+5. **Créer une branche pour vos modifications**  
    Créez une nouvelle branche avec un nom représentatif de votre modification, par exemple `ajout-fonctionnalite` ou `correction-bug` :  
-   `git checkout -b ma-branche`
+   ```bash
+   git checkout -b ma-branche
+   ```
 
-5. **Faire des modifications**  
+7. **Faire des modifications**  
    Apportez vos modifications au code ou à la documentation avec l’éditeur de texte de votre choix.
 
-6. **Enregistrer vos modifications**  
+8. **Enregistrer vos modifications**  
    Une fois vos changements effectués, enregistrez-les avec les commandes suivantes :  
-   `git add .`  
-   `git commit -m "Description des modifications"`  
+   ```bash
+   git add .
+   git commit -m "Description des modifications"
+   ```
    Remplacez `"Description des modifications"` par un message clair et précis.
 
-7. **Envoyer vos modifications sur GitHub**  
+10. **Envoyer vos modifications sur GitHub**  
    Poussez votre branche vers votre fork avec :  
-   `git push origin ma-branche`
+   ```bash
+   git push origin ma-branche
+   ```
 
-8. **Créer une pull request**  
+12. **Créer une pull request**  
    Rendez-vous sur la page GitHub de votre fork, cliquez sur **"Compare & pull request"**, ajoutez une description claire, puis cliquez sur **"Create pull request"** pour proposer vos modifications.
 
 ---
