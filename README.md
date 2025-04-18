@@ -59,10 +59,45 @@ Pour apprendre React, consultez la [documentation de React](https://reactjs.org/
 - **Bootstrap** pour le design et la mise en page.
 - **Node.js** (si applicable) pour le backend.
 
-## Contribution
+## ✨ Contribution
 
-Les contributions sont les bienvenues ! Pour contribuer :
-1. Forkez le repository.
-2. Créez une branche pour vos modifications (`git checkout -b ma-branche`).
-3. Faites vos modifications et testez-les.
-4. Soumettez une pull request.
+Nous serions ravis que vous contribuiez à ce projet, même si vous débutez sur GitHub ! Voici un guide simple pour vous aider à démarrer :
+
+1. **Créer un compte GitHub** (si ce n'est pas déjà fait)  
+   Rendez-vous sur [GitHub](https://github.com/) et inscrivez-vous gratuitement.
+
+2. **Forker le projet**  
+   Cliquez sur le bouton "Fork" en haut à droite de la page du repository pour créer une copie du projet dans votre compte.
+
+3. **Cloner le projet sur votre ordinateur**  
+   Ouvrez un terminal et clonez votre fork avec la commande `git clone`, puis placez-vous dans le dossier du projet :  
+   `git clone https://github.com/<votre_nom_utilisateur>/alumnis-map.git`  
+   `cd alumnis-map`  
+   Remplacez `<votre_nom_utilisateur>` par votre nom d'utilisateur GitHub.*
+
+4. **Créer une branche pour vos modifications**  
+   Créez une nouvelle branche avec un nom représentatif de votre modification, par exemple `ajout-fonctionnalite` ou `correction-bug` :  
+   `git checkout -b ma-branche`
+
+5. **Faire des modifications**  
+   Apportez vos modifications au code ou à la documentation avec l’éditeur de texte de votre choix.
+
+6. **Enregistrer vos modifications**  
+   Une fois vos changements effectués, enregistrez-les avec les commandes suivantes :  
+   `git add .`  
+   `git commit -m "Description des modifications"`  
+   Remplacez `"Description des modifications"` par un message clair et précis.
+
+7. **Envoyer vos modifications sur GitHub**  
+   Poussez votre branche vers votre fork avec :  
+   `git push origin ma-branche`
+
+8. **Créer une pull request**  
+   Rendez-vous sur la page GitHub de votre fork, cliquez sur **"Compare & pull request"**, ajoutez une description claire, puis cliquez sur **"Create pull request"** pour proposer vos modifications.
+
+---
+
+📬 Si vous avez des questions ou besoin d'aide, n'hésitez pas à nous contacter ou à consulter l'[aide GitHub pour les débutants](https://docs.github.com/fr/get-started/quickstart/contributing-to-projects).
+
+Merci pour votre contribution ! 🙌
+
