@@ -59,7 +59,7 @@ Pour apprendre React, consultez la [documentation de React](https://reactjs.org/
 - **Bootstrap** pour le design et la mise en page.
 - **Node.js** (si applicable) pour le backend.
 
-## ✨ Contribution
+## Contribution
 
 Nous serions ravis que vous contribuiez à ce projet, même si vous débutez sur GitHub ! Voici un guide simple pour vous aider à démarrer :
 
@@ -82,11 +82,11 @@ Nous serions ravis que vous contribuiez à ce projet, même si vous débutez sur
    ```bash
    git checkout -b ma-branche
    ```
-
-7. **Faire des modifications**  
+   
+6. **Faire des modifications**  
    Apportez vos modifications au code ou à la documentation avec l’éditeur de texte de votre choix.
 
-8. **Enregistrer vos modifications**  
+7. **Enregistrer vos modifications**  
    Une fois vos changements effectués, enregistrez-les avec les commandes suivantes :  
    ```bash
    git add .
@@ -94,13 +94,13 @@ Nous serions ravis que vous contribuiez à ce projet, même si vous débutez sur
    ```
    Remplacez `"Description des modifications"` par un message clair et précis.
    
-10. **Envoyer vos modifications sur GitHub**  
+8. **Envoyer vos modifications sur GitHub**  
    Poussez votre branche vers votre fork avec :  
    ```bash
    git push origin ma-branche
    ```
 
-12. **Créer une pull request**  
+9. **Créer une pull request**  
    Rendez-vous sur la page GitHub de votre fork, cliquez sur **"Compare & pull request"**, ajoutez une description claire, puis cliquez sur **"Create pull request"** pour proposer vos modifications.
 
 ---
