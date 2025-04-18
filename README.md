@@ -93,7 +93,7 @@ Nous serions ravis que vous contribuiez à ce projet, même si vous débutez sur
    git commit -m "Description des modifications"
    ```
    Remplacez `"Description des modifications"` par un message clair et précis.
-
+   
 10. **Envoyer vos modifications sur GitHub**  
    Poussez votre branche vers votre fork avec :  
    ```bash
