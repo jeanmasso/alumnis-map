@@ -77,16 +77,16 @@ Nous serions ravis que vous contribuiez à ce projet, même si vous débutez sur
    ```
    Remplacez `<votre_nom_utilisateur>` par votre nom d'utilisateur GitHub.*
 
-5. **Créer une branche pour vos modifications**  
+4. **Créer une branche pour vos modifications**  
    Créez une nouvelle branche avec un nom représentatif de votre modification, par exemple `ajout-fonctionnalite` ou `correction-bug` :  
    ```bash
    git checkout -b ma-branche
    ```
    
-6. **Faire des modifications**  
+5. **Faire des modifications**  
    Apportez vos modifications au code ou à la documentation avec l’éditeur de texte de votre choix.
 
-7. **Enregistrer vos modifications**  
+6. **Enregistrer vos modifications**  
    Une fois vos changements effectués, enregistrez-les avec les commandes suivantes :  
    ```bash
    git add .
@@ -94,13 +94,13 @@ Nous serions ravis que vous contribuiez à ce projet, même si vous débutez sur
    ```
    Remplacez `"Description des modifications"` par un message clair et précis.
    
-8. **Envoyer vos modifications sur GitHub**  
+7. **Envoyer vos modifications sur GitHub**  
    Poussez votre branche vers votre fork avec :  
    ```bash
    git push origin ma-branche
    ```
 
-9. **Créer une pull request**  
+8. **Créer une pull request**  
    Rendez-vous sur la page GitHub de votre fork, cliquez sur **"Compare & pull request"**, ajoutez une description claire, puis cliquez sur **"Create pull request"** pour proposer vos modifications.
 
 ---
