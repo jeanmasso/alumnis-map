@@ -1,0 +1,52 @@
+{
+  "countries": {
+    "France": {
+      "name": "France",
+      "center": [46.6034, 1.8883],
+      "bounds": [[41.3253, -5.1406], [51.1242, 9.5625]],
+      "zoomLevel": 6
+    },
+    "Australie": {
+      "name": "Australie", 
+      "center": [-25.2744, 133.7751],
+      "bounds": [[-43.6345, 113.3389], [-10.6681, 153.5694]],
+      "zoomLevel": 5
+    },
+    "Japon": {
+      "name": "Japon",
+      "center": [36.2048, 138.2529],
+      "bounds": [[31.0295, 129.4084], [41.3804, 145.8267]],
+      "zoomLevel": 6
+    },
+    "Brésil": {
+      "name": "Brésil",
+      "center": [-14.2350, -51.9253],
+      "bounds": [[-33.7683, -73.9872], [5.2718, -28.6341]],
+      "zoomLevel": 4
+    },
+    "Royaume-Uni": {
+      "name": "Royaume-Uni",
+      "center": [55.3781, -3.4360],
+      "bounds": [[49.9599, -7.5571], [60.8450, 1.7681]],
+      "zoomLevel": 6
+    },
+    "Allemagne": {
+      "name": "Allemagne",
+      "center": [51.1657, 10.4515],
+      "bounds": [[47.2701, 5.8663], [55.0581, 15.0419]],
+      "zoomLevel": 6
+    },
+    "Canada": {
+      "name": "Canada",
+      "center": [56.1304, -106.3468],
+      "bounds": [[41.6765, -141.0032], [83.1161, -52.6480]],
+      "zoomLevel": 4
+    },
+    "Italie": {
+      "name": "Italie",
+      "center": [41.8719, 12.5674],
+      "bounds": [[36.6199, 6.7499], [47.0920, 18.4802]],
+      "zoomLevel": 6
+    }
+  }
+}
