@@ -1,70 +1,111 @@
-# Getting Started with Create React App
+# Bien démarrer avec le projet Alumnis Map
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## Description du projet
 
-## Available Scripts
+**Alumnis Map** est une carte interactive présentant les anciens élèves de l'IUT de Nouvelle-Calédonie des 10 dernières années. Ce projet vise à valoriser leurs parcours et à offrir une visualisation intuitive de leurs réalisations et de leur localisation à travers le monde.
 
-In the project directory, you can run:
+## Aperçu
+
+![Capture d'écran de l'application](path/to/screenshot.png) <!-- Ajoutez une capture d'écran ici -->
+
+Vous pouvez explorer une version démo ici : [Lien vers la démo](https://demo-url.com) <!-- Ajoutez un lien vers la démo si disponible -->
+
+## Récupération du projet
+
+Clonez le repository depuis GitHub :
+
+```bash
+git clone https://github.com/jeanmasso/alumnis-map.git
+cd alumnis-map
+```
+
+## Scripts disponibles
+
+Dans le répertoire du projet, vous pouvez exécuter :
 
 ### `npm start`
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+Lance l'application en mode développement.\
+Ouvrez [http://localhost:3000](http://localhost:3000) pour la voir dans votre navigateur.
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+La page se rechargera lorsque vous apporterez des modifications.\
+Vous pourrez également voir les erreurs de lint dans la console.
 
 ### `npm test`
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+Lance le test runner en mode interactif.\
+Consultez la section sur [l'exécution des tests](https://facebook.github.io/create-react-app/docs/running-tests) pour plus d'informations.
 
 ### `npm run build`
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+Construit l'application pour la production dans le dossier `build`.\
+Il regroupe correctement React en mode production et optimise la construction pour de meilleures performances.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+La construction est minifiée et les noms de fichiers incluent des hash.\
+Votre application est prête à être déployée !
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+Consultez la section sur [le déploiement](https://facebook.github.io/create-react-app/docs/deployment) pour plus d'informations.
 
-### `npm run eject`
+## En savoir plus
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+Vous pouvez en apprendre davantage dans la [documentation de Create React App](https://facebook.github.io/create-react-app/docs/getting-started).
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+Pour apprendre React, consultez la [documentation de React](https://reactjs.org/).
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+## Technologies utilisées
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+- **React** pour la construction de l'interface utilisateur.
+- **Leaflet** pour la gestion des cartes interactives.
+- **Bootstrap** pour le design et la mise en page.
+- **Node.js** (si applicable) pour le backend.
 
-## Learn More
+## Contribution
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+Nous serions ravis que vous contribuiez à ce projet, même si vous débutez sur GitHub ! Voici un guide simple pour vous aider à démarrer :
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+1. **Créer un compte GitHub** (si ce n'est pas déjà fait)  
+   Rendez-vous sur [GitHub](https://github.com/) et inscrivez-vous gratuitement.
 
-### Code Splitting
+2. **Forker le projet**  
+   Cliquez sur le bouton "Fork" en haut à droite de la page du repository pour créer une copie du projet dans votre compte.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+3. **Cloner le projet sur votre ordinateur**  
+   Ouvrez un terminal et clonez votre fork avec la commande `git clone`, puis placez-vous dans le dossier du projet :  
+   ```bash
+   git clone https://github.com/<votre_nom_utilisateur>/alumnis-map.git  
+   cd alumnis-map
+   ```
+   Remplacez `<votre_nom_utilisateur>` par votre nom d'utilisateur GitHub.*
 
-### Analyzing the Bundle Size
+4. **Créer une branche pour vos modifications**  
+   Créez une nouvelle branche avec un nom représentatif de votre modification, par exemple `ajout-fonctionnalite` ou `correction-bug` :  
+   ```bash
+   git checkout -b ma-branche
+   ```
+   
+5. **Faire des modifications**  
+   Apportez vos modifications au code ou à la documentation avec l’éditeur de texte de votre choix.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+6. **Enregistrer vos modifications**  
+   Une fois vos changements effectués, enregistrez-les avec les commandes suivantes :  
+   ```bash
+   git add .
+   git commit -m "Description des modifications"
+   ```
+   Remplacez `"Description des modifications"` par un message clair et précis.
+   
+7. **Envoyer vos modifications sur GitHub**  
+   Poussez votre branche vers votre fork avec :  
+   ```bash
+   git push origin ma-branche
+   ```
 
-### Making a Progressive Web App
+8. **Créer une pull request**  
+   Rendez-vous sur la page GitHub de votre fork, cliquez sur **"Compare & pull request"**, ajoutez une description claire, puis cliquez sur **"Create pull request"** pour proposer vos modifications.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+---
 
-### Advanced Configuration
+📬 Si vous avez des questions ou besoin d'aide, n'hésitez pas à nous contacter ou à consulter l'[aide GitHub pour les débutants](https://docs.github.com/fr/get-started/quickstart/contributing-to-projects).
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+Merci pour votre contribution ! 🙌
 
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
