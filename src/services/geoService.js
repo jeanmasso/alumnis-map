@@ -5,11 +5,13 @@
 class GeoService {
   /**
    * Détermine le niveau d'affichage selon le zoom
-   * - Zoom 2-5: Compteurs par pays
-   * - Zoom 6+: Cartes individuelles des alumni
+   * - Niveau 0 (zoom 2-4): Vue globale - Compteurs par pays
+   * - Niveau 1 (zoom 5-7): Vue pays - Compteurs par région/ville
+   * - Niveau 2 (zoom 8+): Vue locale - Cartes individuelles des alumni
    */
   static getDisplayLevel(zoomLevel) {
-    if (zoomLevel <= 5) return 'country';
+    if (zoomLevel <= 4) return 'country';
+    if (zoomLevel <= 7) return 'region';
     return 'individual';
   }
 

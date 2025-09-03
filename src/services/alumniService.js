@@ -115,6 +115,61 @@ class AlumniService {
   }
 
   /**
+   * Groupe les alumni par région (logique simplifiée basée sur la proximité des villes)
+   */
+  getAlumniByRegion() {
+    const groupedByRegion = {};
+
+    this.alumni.forEach(alumni => {
+      // Pour simplifier, on groupe par pays + première partie de la ville ou coordonnées proches
+      let regionKey;
+      
+      // Logique de regroupement régional simple
+      if (alumni.country === 'France') {
+        // Pour la France, on peut définir des régions principales
+        if (alumni.city.includes('Paris') || alumni.city.includes('Île-de-France')) {
+          regionKey = 'France_IleDeFrance';
+        } else if (alumni.city.includes('Lyon') || alumni.city.includes('Rhône')) {
+          regionKey = 'France_RhoneAlpes';
+        } else if (alumni.city.includes('Nouméa') || alumni.city.includes('Nouvelle-Calédonie')) {
+          regionKey = 'France_NouvelleCaledonie';
+        } else {
+          regionKey = `France_${alumni.city}`;
+        }
+      } else {
+        // Pour les autres pays, on groupe par ville principale ou région métropolitaine
+        regionKey = `${alumni.country}_${alumni.city}`;
+      }
+
+      if (!groupedByRegion[regionKey]) {
+        // Calculer les coordonnées moyennes pour la région
+        groupedByRegion[regionKey] = {
+          region: regionKey,
+          country: alumni.country,
+          mainCity: alumni.city,
+          count: 0,
+          alumni: [],
+          coordinates: alumni.coordinates // Sera mis à jour avec la moyenne
+        };
+      }
+
+      groupedByRegion[regionKey].count++;
+      groupedByRegion[regionKey].alumni.push(alumni);
+    });
+
+    // Calculer les coordonnées moyennes pour chaque région
+    Object.values(groupedByRegion).forEach(regionGroup => {
+      if (regionGroup.count > 1) {
+        const avgLat = regionGroup.alumni.reduce((sum, alumni) => sum + alumni.coordinates[0], 0) / regionGroup.count;
+        const avgLng = regionGroup.alumni.reduce((sum, alumni) => sum + alumni.coordinates[1], 0) / regionGroup.count;
+        regionGroup.coordinates = [avgLat, avgLng];
+      }
+    });
+
+    return groupedByRegion;
+  }
+
+  /**
    * Retourne un alumni par son ID
    */
   getAlumniById(id) {

@@ -26,7 +26,7 @@ const AlumniMap = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [currentZoom, setCurrentZoom] = useState(2);
-  const [displayMode, setDisplayMode] = useState('country'); // 'country', 'individual'
+  const [displayMode, setDisplayMode] = useState('country'); // 'country', 'region', 'individual'
 
   // ===== DÉFINITIONS DES FONCTIONS =====
   
@@ -56,6 +56,18 @@ const AlumniMap = () => {
     
     sortedCountries.forEach(countryGroup => {
       createCountryMarker(countryGroup);
+    });
+  };
+
+  // Affichage des compteurs par région
+  const displayRegionMarkers = () => {
+    const regionsData = alumniService.getAlumniByRegion();
+    
+    // Trier les régions par nombre d'alumni (croissant) pour afficher d'abord ceux avec moins d'alumni
+    const sortedRegions = Object.values(regionsData).sort((a, b) => a.count - b.count);
+    
+    sortedRegions.forEach(regionGroup => {
+      createRegionMarker(regionGroup);
     });
   };
 
@@ -136,26 +148,26 @@ const AlumniMap = () => {
       <div style="font-size: ${fontSize}px; line-height: 1; font-weight: bold;">${countryGroup.count}</div>
     `;
 
-    // Événement de clic pour zoomer vers les cartes individuelles
+    // Événement de clic pour zoomer vers le niveau région ou individuel
     container.addEventListener('click', (e) => {
       e.stopPropagation();
       
       if (countryGroup.count === 1) {
-        // Cas 1: Un seul alumni - zoomer directement sur sa position exacte
+        // Cas 1: Un seul alumni - zoomer directement au niveau individuel
         const alumni = countryGroup.alumni[0];
         mapInstance.current.setView(alumni.coordinates, 8);
       } else {
-        // Cas 2: Plusieurs alumni - zoomer sur le centre du pays
+        // Cas 2: Plusieurs alumni - zoomer au niveau région (niveau 1)
         mapInstance.current.setView(countryGroup.coordinates, 6);
       }
       
-      // Forcer le changement de mode après un délai pour s'assurer que le zoom est terminé
+      // Forcer le changement de mode après un délai
       setTimeout(() => {
         const currentZoom = mapInstance.current.getZoom();
         const newDisplayMode = geoService.getDisplayLevel(currentZoom);
         setDisplayMode(newDisplayMode);
         setCurrentZoom(currentZoom);
-      }, 500); // Délai pour laisser l'animation de zoom se terminer
+      }, 500);
     });
 
     const icon = L.divIcon({
@@ -168,6 +180,105 @@ const AlumniMap = () => {
     const marker = L.marker(countryGroup.coordinates, { 
       icon: icon,
       zIndexOffset: countryGroup.count * 100 // Offset basé sur le nombre d'alumni
+    }).addTo(mapInstance.current);
+    markersRef.current.push(marker);
+  };
+
+  // Créer un marqueur région
+  const createRegionMarker = (regionGroup) => {
+    const container = document.createElement('div');
+    container.className = 'region-marker';
+    const markerSize = geoService.getMarkerSize(regionGroup.count);
+    
+    // Calculer le z-index basé sur le nombre d'alumni
+    const zIndex = 1000 + regionGroup.count;
+    
+    // Intensité du dégradé basée sur le nombre d'alumni (style similaire aux pays mais avec une teinte différente)
+    const intensity = Math.min(regionGroup.count / 20, 1);
+    const lightBlue = `rgba(52, 152, 219, ${0.7 + intensity * 0.3})`; // Bleu pour différencier des pays
+    const darkBlue = `rgba(41, 128, 185, ${0.8 + intensity * 0.2})`;
+    
+    container.style.cssText = `
+      width: ${markerSize.width}px;
+      height: ${markerSize.height}px;
+      background: radial-gradient(circle at 30% 30%, ${lightBlue}, ${darkBlue});
+      border: 1px solid rgba(255, 255, 255, 0.8);
+      border-radius: 50%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+      box-shadow: 
+        0 4px 12px rgba(41, 128, 185, 0.4),
+        inset 0 1px 3px rgba(255, 255, 255, 0.3);
+      transition: all 0.3s ease;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      z-index: ${zIndex};
+      position: relative;
+    `;
+
+    // Effet hover avec intensité bleue
+    container.addEventListener('mouseenter', () => {
+      const hoverIntensity = Math.min(regionGroup.count / 20, 1);
+      const hoverLightBlue = `rgba(52, 152, 219, ${0.9 + hoverIntensity * 0.1})`;
+      const hoverDarkBlue = `rgba(41, 128, 185, 1.0)`;
+      
+      container.style.transform = 'scale(1.2)';
+      container.style.background = `radial-gradient(circle at 30% 30%, ${hoverLightBlue}, ${hoverDarkBlue})`;
+      container.style.boxShadow = `
+        0 6px 20px rgba(41, 128, 185, 0.6),
+        inset 0 2px 4px rgba(255, 255, 255, 0.4)
+      `;
+    });
+
+    container.addEventListener('mouseleave', () => {
+      const intensity = Math.min(regionGroup.count / 20, 1);
+      const lightBlue = `rgba(52, 152, 219, ${0.7 + intensity * 0.3})`;
+      const darkBlue = `rgba(41, 128, 185, ${0.8 + intensity * 0.2})`;
+      
+      container.style.transform = 'scale(1)';
+      container.style.background = `radial-gradient(circle at 30% 30%, ${lightBlue}, ${darkBlue})`;
+      container.style.boxShadow = `
+        0 4px 12px rgba(41, 128, 185, 0.4),
+        inset 0 1px 3px rgba(255, 255, 255, 0.3)
+      `;
+    });
+
+    const fontSize = Math.max(14, markerSize.width * 0.35);
+
+    container.innerHTML = `
+      <div style="font-size: ${fontSize}px; line-height: 1; font-weight: bold;">${regionGroup.count}</div>
+    `;
+
+    // Événement de clic pour zoomer vers les cartes individuelles (niveau 2)
+    container.addEventListener('click', (e) => {
+      e.stopPropagation();
+      
+      // Zoomer au niveau 2 (niveau 8) pour afficher les cartes individuelles
+      mapInstance.current.setView(regionGroup.coordinates, 8);
+      
+      // Forcer le changement de mode après un délai
+      setTimeout(() => {
+        const currentZoom = mapInstance.current.getZoom();
+        const newDisplayMode = geoService.getDisplayLevel(currentZoom);
+        setDisplayMode(newDisplayMode);
+        setCurrentZoom(currentZoom);
+      }, 500);
+    });
+
+    const icon = L.divIcon({
+      html: container,
+      className: 'region-cluster-icon',
+      iconSize: [markerSize.width, markerSize.height],
+      iconAnchor: [markerSize.width/2, markerSize.height/2]
+    });
+
+    const marker = L.marker(regionGroup.coordinates, { 
+      icon: icon,
+      zIndexOffset: regionGroup.count * 100
     }).addTo(mapInstance.current);
     markersRef.current.push(marker);
   };
@@ -217,7 +328,7 @@ const AlumniMap = () => {
     setIsPanelOpen(true);
   };
 
-  // Fonction pour mettre à jour l'affichage selon le mode (pays/individuel)
+  // Fonction pour mettre à jour l'affichage selon le mode (pays/région/individuel)
   const updateMarkersDisplay = useCallback(() => {
     // Nettoyer les marqueurs existants
     clearAllMarkers();
@@ -227,6 +338,9 @@ const AlumniMap = () => {
     switch (displayMode) {
       case 'country':
         displayCountryMarkers();
+        break;
+      case 'region':
+        displayRegionMarkers();
         break;
       case 'individual':
         displayIndividualMarkers();
