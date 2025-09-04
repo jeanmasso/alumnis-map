@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom/client';
 import L from 'leaflet';
 import AlumniCard from './AlumniCard';
 import AlumniProfile from './AlumniProfile';
+import AlumniFilters from './AlumniFilters';
 import alumniService from '../services/alumniService';
 import geoService from '../services/geoService';
 import 'leaflet/dist/leaflet.css';
@@ -21,8 +22,9 @@ const AlumniMap = () => {
   const markersRef = useRef([]);
   const [selectedAlumni, setSelectedAlumni] = useState(null);
   const [isPanelOpen, setIsPanelOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
   const [alumniData, setAlumniData] = useState([]);
+  const [allAlumniData, setAllAlumniData] = useState([]);
+  const [isFiltersOpen, setIsFiltersOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [currentZoom, setCurrentZoom] = useState(2);
@@ -30,6 +32,29 @@ const AlumniMap = () => {
 
   // ===== DÉFINITIONS DES FONCTIONS =====
   
+  // Gestion des filtres
+  const handleFilterChange = useCallback((filters) => {
+    // Appliquer les filtres sur toutes les données
+    let filtered = allAlumniData;
+    
+    // Si on a des filtres actifs, les appliquer
+    const hasActiveFilters = Object.values(filters).some(filter => filter !== '');
+    if (hasActiveFilters) {
+      // Temporairement mettre à jour le service avec les données à filtrer
+      const originalData = alumniService.alumni;
+      alumniService.alumni = filtered;
+      filtered = alumniService.filterAlumni(filters);
+      alumniService.alumni = originalData;
+    }
+    
+    setAlumniData(filtered);
+  }, [allAlumniData]);
+
+  // Gestion de l'ouverture/fermeture du menu de filtres
+  const toggleFiltersMenu = useCallback(() => {
+    setIsFiltersOpen(prev => !prev);
+  }, []);
+
   // Nettoyer tous les marqueurs
   const clearAllMarkers = () => {
     markersRef.current.forEach(marker => {
@@ -49,7 +74,7 @@ const AlumniMap = () => {
 
   // Affichage des compteurs par pays
   const displayCountryMarkers = () => {
-    const countriesData = alumniService.getAlumniByCountry();
+    const countriesData = alumniService.getAlumniByCountry(alumniData);
     
     // Trier les pays par nombre d'alumni (croissant) pour afficher d'abord ceux avec moins d'alumni
     const sortedCountries = Object.values(countriesData).sort((a, b) => a.count - b.count);
@@ -61,7 +86,7 @@ const AlumniMap = () => {
 
   // Affichage des compteurs par région
   const displayRegionMarkers = () => {
-    const regionsData = alumniService.getAlumniByRegion();
+    const regionsData = alumniService.getAlumniByRegion(alumniData);
     
     // Trier les régions par nombre d'alumni (croissant) pour afficher d'abord ceux avec moins d'alumni
     const sortedRegions = Object.values(regionsData).sort((a, b) => a.count - b.count);
@@ -335,7 +360,16 @@ const AlumniMap = () => {
 
     if (!mapInstance.current || alumniData.length === 0) return;
 
-    switch (displayMode) {
+    // Toujours vérifier le zoom actuel pour déterminer le bon mode d'affichage
+    const currentZoom = mapInstance.current.getZoom();
+    const correctDisplayMode = geoService.getDisplayLevel(currentZoom);
+    
+    // Mettre à jour le displayMode si nécessaire
+    if (correctDisplayMode !== displayMode) {
+      setDisplayMode(correctDisplayMode);
+    }
+
+    switch (correctDisplayMode) {
       case 'country':
         displayCountryMarkers();
         break;
@@ -360,6 +394,7 @@ const AlumniMap = () => {
       try {
         const result = await alumniService.loadData();
         if (result.success) {
+          setAllAlumniData(result.data);
           setAlumniData(result.data);
           setError(null);
         } else {
@@ -444,6 +479,25 @@ const AlumniMap = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [displayMode, alumniData]); // updateMarkersDisplay ne peut pas être ajouté car dépendance circulaire
 
+  // useEffect pour gérer la fermeture du menu de filtres au clic sur la carte
+  useEffect(() => {
+    if (mapInstance.current) {
+      const handleMapClick = () => {
+        if (isFiltersOpen) {
+          setIsFiltersOpen(false);
+        }
+      };
+
+      mapInstance.current.on('click', handleMapClick);
+      
+      return () => {
+        if (mapInstance.current) {
+          mapInstance.current.off('click', handleMapClick);
+        }
+      };
+    }
+  }, [isFiltersOpen]);
+
   // useEffect séparé pour mettre à jour l'état des cartes quand selectedAlumni change
   useEffect(() => {
     // Utiliser requestAnimationFrame pour éviter les race conditions
@@ -467,11 +521,6 @@ const AlumniMap = () => {
     });
   }, [selectedAlumni]);  // eslint-disable-line react-hooks/exhaustive-deps
 
-  const showAlumniDetails = (alumni) => {
-    setSelectedAlumni(alumni);
-    setIsPanelOpen(true);
-  };
-
   const closePanel = () => {
     setIsPanelOpen(false);
     setSelectedAlumni(null);
@@ -481,46 +530,6 @@ const AlumniMap = () => {
     // Ici vous pourrez ajouter la logique de contact
     // Par exemple : ouvrir un modal de contact, rediriger vers email, etc.
     alert(`Contacter ${alumni.firstname} ${alumni.name} à l'adresse : contact@example.com`);
-  };
-
-  const searchAlumni = () => {
-    if (!searchQuery.trim()) {
-      // Si pas de recherche, réinitialiser l'affichage normal
-      setAlumniData(alumniService.getAllAlumni());
-      return;
-    }
-
-    // Utiliser le service de recherche
-    const results = alumniService.searchAlumni(searchQuery);
-    
-    if (results.length > 0) {
-      // Si un seul résultat, centrer sur lui et ouvrir le profil
-      if (results.length === 1) {
-        const foundAlumni = results[0];
-        const [latitude, longitude] = foundAlumni.coordinates;
-        
-        mapInstance.current.setView([latitude, longitude], 12);
-        showAlumniDetails(foundAlumni);
-      } else {
-        // Plusieurs résultats : mettre à jour les données affichées
-        setAlumniData(results);
-        
-        // Calculer les bounds pour afficher tous les résultats
-        const bounds = results.map(alumni => alumni.coordinates);
-        if (bounds.length > 1) {
-          mapInstance.current.fitBounds(bounds, { padding: [20, 20] });
-        }
-      }
-    } else {
-      // Aucun résultat trouvé
-      alert('Aucun alumni trouvé pour cette recherche');
-    }
-  };
-
-  const handleKeyPress = (e) => {
-    if (e.key === 'Enter') {
-      searchAlumni();
-    }
   };
 
   return (
@@ -575,41 +584,20 @@ const AlumniMap = () => {
         Zoom: {currentZoom} | 
         Alumni: {alumniData.length}
       </div>
-      {/* Barre de recherche */}
+      
+      {/* Panneau de filtres avec burger menu */}
       <div style={{
         position: 'absolute',
         top: '20px',
         left: '20px',
-        zIndex: 1000,
-        display: 'flex',
-        gap: '10px'
+        zIndex: 1000
       }}>
-        <input
-          type="text"
-          placeholder="Rechercher un alumni..."
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          onKeyPress={handleKeyPress}
-          style={{
-            padding: '10px',
-            borderRadius: '5px',
-            border: '1px solid #ccc',
-            minWidth: '250px'
-          }}
+        <AlumniFilters
+          alumni={allAlumniData}
+          onFilterChange={handleFilterChange}
+          isOpen={isFiltersOpen}
+          onToggle={toggleFiltersMenu}
         />
-        <button
-          onClick={searchAlumni}
-          style={{
-            padding: '10px 15px',
-            borderRadius: '5px',
-            border: 'none',
-            backgroundColor: '#007bff',
-            color: 'white',
-            cursor: 'pointer'
-          }}
-        >
-          Rechercher
-        </button>
       </div>
 
       {/* Container de la carte */}

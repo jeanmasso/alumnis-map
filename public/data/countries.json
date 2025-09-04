@@ -47,6 +47,12 @@
       "center": [41.8719, 12.5674],
       "bounds": [[36.6199, 6.7499], [47.0920, 18.4802]],
       "zoomLevel": 6
+    },
+    "Nouvelle-Calédonie": {
+      "name": "Nouvelle-Calédonie",
+      "center": [-21.1151, 165.6189],
+      "bounds": [[-22.6982, 163.5647], [-19.5320, 167.6731]],
+      "zoomLevel": 8
     }
   }
 }

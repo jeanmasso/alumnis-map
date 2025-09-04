@@ -61,12 +61,43 @@ class AlumniService {
   }
 
   /**
+   * Filtre les alumni par critères multiples
+   */
+  filterAlumni(filters) {
+    let filteredAlumni = this.alumni;
+
+    // Filtre par année de promotion
+    if (filters.graduationYear && filters.graduationYear !== '') {
+      filteredAlumni = filteredAlumni.filter(alumni => 
+        alumni.graduationYear === parseInt(filters.graduationYear)
+      );
+    }
+
+    // Filtre par pays
+    if (filters.country && filters.country !== '') {
+      filteredAlumni = filteredAlumni.filter(alumni => 
+        alumni.country === filters.country
+      );
+    }
+
+    // Filtre par type de promotion
+    if (filters.promotionType && filters.promotionType !== '') {
+      filteredAlumni = filteredAlumni.filter(alumni => 
+        alumni.promotionType === filters.promotionType
+      );
+    }
+
+    return filteredAlumni;
+  }
+
+  /**
    * Groupe les alumni par pays
    */
-  getAlumniByCountry() {
+  getAlumniByCountry(alumniList = null) {
+    const alumni = alumniList || this.alumni;
     const groupedByCountry = {};
 
-    this.alumni.forEach(alumni => {
+    alumni.forEach(alumni => {
       const country = alumni.country;
       
       if (!groupedByCountry[country]) {
@@ -91,10 +122,11 @@ class AlumniService {
   /**
    * Groupe les alumni par ville
    */
-  getAlumniByCity() {
+  getAlumniByCity(alumniList = null) {
+    const alumni = alumniList || this.alumni;
     const groupedByCity = {};
 
-    this.alumni.forEach(alumni => {
+    alumni.forEach(alumni => {
       const cityKey = `${alumni.city}, ${alumni.country}`;
       
       if (!groupedByCity[cityKey]) {
@@ -117,10 +149,11 @@ class AlumniService {
   /**
    * Groupe les alumni par région (logique simplifiée basée sur la proximité des villes)
    */
-  getAlumniByRegion() {
+  getAlumniByRegion(alumniList = null) {
+    const alumni = alumniList || this.alumni;
     const groupedByRegion = {};
 
-    this.alumni.forEach(alumni => {
+    alumni.forEach(alumni => {
       // Pour simplifier, on groupe par pays + première partie de la ville ou coordonnées proches
       let regionKey;
       
@@ -205,6 +238,14 @@ class AlumniService {
   getAvailableCompanies() {
     const companies = [...new Set(this.alumni.map(alumni => alumni.company))];
     return companies.sort();
+  }
+
+  /**
+   * Retourne les types de promotion disponibles
+   */
+  getAvailablePromotionTypes() {
+    const promotionTypes = [...new Set(this.alumni.map(alumni => alumni.promotionType))];
+    return promotionTypes.sort();
   }
 
   /**
