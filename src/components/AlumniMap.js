@@ -28,7 +28,7 @@ const AlumniMap = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [currentZoom, setCurrentZoom] = useState(2);
-  const [displayMode, setDisplayMode] = useState('country'); // 'country', 'region', 'individual'
+  const [displayMode, setDisplayMode] = useState('country'); // 'country', 'region', 'pins', 'individual'
 
   // ===== DÉFINITIONS DES FONCTIONS =====
   
@@ -93,6 +93,29 @@ const AlumniMap = () => {
     
     sortedRegions.forEach(regionGroup => {
       createRegionMarker(regionGroup);
+    });
+  };
+
+  // Affichage des épingles Leaflet natives
+  const displayPinMarkers = () => {
+    // Grouper les alumni par position géographique
+    const positionsData = {};
+    
+    alumniData.forEach(alumni => {
+      const key = `${alumni.coordinates[0]},${alumni.coordinates[1]}`;
+      if (!positionsData[key]) {
+        positionsData[key] = {
+          coordinates: alumni.coordinates,
+          alumni: [],
+          count: 0
+        };
+      }
+      positionsData[key].alumni.push(alumni);
+      positionsData[key].count++;
+    });
+
+    Object.values(positionsData).forEach(positionGroup => {
+      createPinMarker(positionGroup);
     });
   };
 
@@ -180,7 +203,7 @@ const AlumniMap = () => {
       if (countryGroup.count === 1) {
         // Cas 1: Un seul alumni - zoomer directement au niveau individuel
         const alumni = countryGroup.alumni[0];
-        mapInstance.current.setView(alumni.coordinates, 8);
+        mapInstance.current.setView(alumni.coordinates, 12);
       } else {
         // Cas 2: Plusieurs alumni - zoomer au niveau région (niveau 1)
         mapInstance.current.setView(countryGroup.coordinates, 6);
@@ -278,12 +301,18 @@ const AlumniMap = () => {
       <div style="font-size: ${fontSize}px; line-height: 1; font-weight: bold;">${regionGroup.count}</div>
     `;
 
-    // Événement de clic pour zoomer vers les cartes individuelles (niveau 2)
+    // Événement de clic pour zoomer vers les épingles ou directement vers les cartes individuelles
     container.addEventListener('click', (e) => {
       e.stopPropagation();
       
-      // Zoomer au niveau 2 (niveau 8) pour afficher les cartes individuelles
-      mapInstance.current.setView(regionGroup.coordinates, 8);
+      if (regionGroup.count === 1) {
+        // Cas 1: Un seul alumni - zoomer directement au niveau individuel
+        const alumni = regionGroup.alumni[0];
+        mapInstance.current.setView(alumni.coordinates, 12);
+      } else {
+        // Cas 2: Plusieurs alumni - zoomer au niveau épingles (niveau 8)
+        mapInstance.current.setView(regionGroup.coordinates, 8);
+      }
       
       // Forcer le changement de mode après un délai
       setTimeout(() => {
@@ -305,6 +334,21 @@ const AlumniMap = () => {
       icon: icon,
       zIndexOffset: regionGroup.count * 100
     }).addTo(mapInstance.current);
+    markersRef.current.push(marker);
+  };
+
+    // Créer une épingle Leaflet native
+  const createPinMarker = (positionGroup) => {
+    const marker = L.marker(positionGroup.coordinates, {
+      riseOnHover: true
+    })
+    .addTo(mapInstance.current);
+
+    // Événement de clic pour zoomer vers les cartes individuelles
+    marker.on('click', () => {
+      mapInstance.current.setView(positionGroup.coordinates, 12);
+    });
+
     markersRef.current.push(marker);
   };
 
@@ -375,6 +419,9 @@ const AlumniMap = () => {
         break;
       case 'region':
         displayRegionMarkers();
+        break;
+      case 'pins':
+        displayPinMarkers();
         break;
       case 'individual':
         displayIndividualMarkers();
@@ -521,6 +568,17 @@ const AlumniMap = () => {
     });
   }, [selectedAlumni]);  // eslint-disable-line react-hooks/exhaustive-deps
 
+  const returnToGlobalView = () => {
+    // Retourner à la vue globale (zoom niveau 2)
+    mapInstance.current.setView([20, 0], 2);
+    
+    // Forcer la mise à jour du mode après un délai
+    setTimeout(() => {
+      setCurrentZoom(2);
+      setDisplayMode('country');
+    }, 300);
+  };
+
   const closePanel = () => {
     setIsPanelOpen(false);
     setSelectedAlumni(null);
@@ -568,21 +626,65 @@ const AlumniMap = () => {
         </div>
       )}
 
-      {/* Indicateur du mode d'affichage */}
+      {/* Contrôles de navigation */}
       <div style={{
         position: 'absolute',
         top: '20px',
         right: '20px',
         zIndex: 1000,
-        background: 'rgba(255,255,255,0.9)',
-        padding: '8px 12px',
-        borderRadius: '4px',
-        fontSize: '12px',
-        border: '1px solid #ddd'
+        display: 'flex',
+        gap: '10px',
+        alignItems: 'center'
       }}>
-        Mode: {displayMode === 'country' ? 'Pays' : displayMode === 'city' ? 'Ville' : 'Individuel'} | 
-        Zoom: {currentZoom} | 
-        Alumni: {alumniData.length}
+        {/* Bouton retour à la vue globale - masqué si déjà en vue globale */}
+        {displayMode !== 'country' && (
+          <button
+            onClick={returnToGlobalView}
+            style={{
+              background: 'linear-gradient(135deg, #6B46C1 0%, #9333EA 100%)',
+              color: 'white',
+              border: 'none',
+              borderRadius: '6px',
+              padding: '8px 12px',
+              fontSize: '12px',
+              cursor: 'pointer',
+              fontWeight: '500',
+              boxShadow: '0 2px 8px rgba(107, 70, 193, 0.3)',
+              transition: 'all 0.2s ease',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '4px'
+            }}
+            onMouseEnter={(e) => {
+              e.target.style.transform = 'translateY(-1px)';
+              e.target.style.boxShadow = '0 4px 12px rgba(107, 70, 193, 0.4)';
+            }}
+            onMouseLeave={(e) => {
+              e.target.style.transform = 'translateY(0)';
+              e.target.style.boxShadow = '0 2px 8px rgba(107, 70, 193, 0.3)';
+            }}
+          >
+            🌍 Vue globale
+          </button>
+        )}
+
+        {/* Indicateur du mode d'affichage */}
+        <div style={{
+          background: 'rgba(255,255,255,0.9)',
+          padding: '8px 12px',
+          borderRadius: '4px',
+          fontSize: '12px',
+          border: '1px solid #ddd'
+        }}>
+          Mode: {
+            displayMode === 'country' ? 'Pays' : 
+            displayMode === 'region' ? 'Région' : 
+            displayMode === 'pins' ? 'Épingles' : 
+            'Cartes'
+          } | 
+          Zoom: {currentZoom} | 
+          Alumni: {alumniData.length}
+        </div>
       </div>
       
       {/* Panneau de filtres avec burger menu */}

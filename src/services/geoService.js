@@ -7,11 +7,13 @@ class GeoService {
    * Détermine le niveau d'affichage selon le zoom
    * - Niveau 0 (zoom 2-4): Vue globale - Compteurs par pays
    * - Niveau 1 (zoom 5-7): Vue pays - Compteurs par région/ville
-   * - Niveau 2 (zoom 8+): Vue locale - Cartes individuelles des alumni
+   * - Niveau 2 (zoom 8-11): Vue épingles - Épingles Leaflet natives
+   * - Niveau 3 (zoom 12+): Vue locale - Cartes individuelles des alumni
    */
   static getDisplayLevel(zoomLevel) {
     if (zoomLevel <= 4) return 'country';
     if (zoomLevel <= 7) return 'region';
+    if (zoomLevel <= 11) return 'pins';
     return 'individual';
   }
 
