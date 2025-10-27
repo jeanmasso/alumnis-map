@@ -16,6 +16,7 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background-color: rgb(172, green, blue);
 }
 
 /* Styles pour les marqueurs personnalisés */
@@ -28,4 +29,34 @@ body {
 .leaflet-div-icon {
   background: transparent !important;
   border: none !important;
+}
+
+/* Image décorative "Découvrez nos alumnis" */
+.discover-alumni-overlay {
+  position: absolute;
+  bottom: 10px;
+  left: 10px;
+  z-index: 1000;
+  pointer-events: none; /* Purement décorative - pas d'interaction */
+}
+
+.discover-alumni-image {
+  max-width: 280px;
+  height: auto;
+}
+
+/* Responsive pour mobile */
+@media (max-width: 768px) {
+  
+  .discover-alumni-image {
+    max-width: 200px;
+  }
+}
+
+/* Très petits écrans */
+@media (max-width: 480px) {
+  
+  .discover-alumni-image {
+    max-width: 160px;
+  }
 }

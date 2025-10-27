@@ -463,11 +463,11 @@ const AlumniMap = () => {
       // Initialisation de la carte et retrait du contrôle de zoom par défaut
       mapInstance.current = L.map(mapRef.current, {
         zoomControl: false,
-        minZoom: 2,  // Zoom minimum pour voir le monde entier sans duplicatas
+        minZoom: 3,  // Zoom minimum pour voir le monde entier sans duplicatas
         maxZoom: 18, // Zoom maximum
         maxBounds: [[-85, -180], [85, 180]], // Limites du monde entier (évite les pôles)
         maxBoundsViscosity: 1.0 // Empêche de sortir des limites
-      }).setView([20, 0], 2); // Vue centrée sur le monde entier
+      }).setView([20, 0], 3); // Vue centrée sur le monde entier
 
       // Ajouter manuellement le contrôle avec une nouvelle position
       L.control.zoom({ position: 'bottomright' }).addTo(mapInstance.current);
@@ -475,7 +475,7 @@ const AlumniMap = () => {
       // Ajouter un fond de carte OpenStreetMap avec limites
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         maxZoom: 18,
-        minZoom: 2,
+        minZoom: 3,
         attribution: '© OpenStreetMap contributors',
         noWrap: true, // Empêche la répétition horizontale de la carte
         bounds: [[-85, -180], [85, 180]] // Limites géographiques du monde entier
@@ -569,12 +569,12 @@ const AlumniMap = () => {
   }, [selectedAlumni]);  // eslint-disable-line react-hooks/exhaustive-deps
 
   const returnToGlobalView = () => {
-    // Retourner à la vue globale (zoom niveau 2)
-    mapInstance.current.setView([20, 0], 2);
+    // Retourner à la vue globale (zoom niveau 3)
+    mapInstance.current.setView([20, 0], 3);
     
     // Forcer la mise à jour du mode après un délai
     setTimeout(() => {
-      setCurrentZoom(2);
+      setCurrentZoom(3);
       setDisplayMode('country');
     }, 300);
   };
@@ -704,6 +704,15 @@ const AlumniMap = () => {
 
       {/* Container de la carte */}
       <div ref={mapRef} style={{ height: '100%', width: '100%' }} />
+
+      {/* Image "Découvrez nos alumnis" - purement décorative */}
+      <div className="discover-alumni-overlay">
+        <img 
+          src="/images/DECOUVREZ_NOS_ALUMNIS.png" 
+          alt="Découvrez nos alumnis" 
+          className="discover-alumni-image"
+        />
+      </div>
 
       {/* Panneau de profil alumni */}
       <AlumniProfile
