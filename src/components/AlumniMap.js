@@ -34,7 +34,8 @@ const AlumniMap = () => {
   const [displayMode, setDisplayMode] = useState('country'); // 'country', 'region', 'pins', 'individual'
   // États des cartes : 'front' (face) | 'back' (dos) | 'profile' (profil ouvert)
   const [cardStates, setCardStates] = useState(new Map()); // Map<alumniId, state>
-  const [flippedCards, setFlippedCards] = useState(new Set()); // Deprecated - kept for compatibility // IDs des cartes retournées
+  const [flippedCards, setFlippedCards] = useState(new Set()); // Deprecated - kept for compatibility
+  const [lastInteractionTime, setLastInteractionTime] = useState(new Map()); // Anti-spam protection // IDs des cartes retournées
 
   // Fonction de navigation directionnelle (définie en premier pour le hook)
   const handleDirectionalNavigation = useCallback((direction, bubbleInfo) => {
@@ -519,6 +520,7 @@ const AlumniMap = () => {
     console.log('Current cardStates before reset:', cardStates);
     setCardStates(new Map());
     setFlippedCards(new Set());
+    setLastInteractionTime(new Map()); // Reset timestamps aussi
     setSelectedAlumni(null);
     setIsPanelOpen(false);
     console.log('All cards reset to front state');
@@ -527,6 +529,17 @@ const AlumniMap = () => {
   // Nouvelle logique de gestion des clics avec machine à états
   const handleAlumniCardClick = (alumni) => {
     const deviceType = /Mobile|Android|iPhone|iPad/.test(navigator.userAgent) ? 'Mobile' : 'Desktop';
+    const now = Date.now();
+    const lastTime = lastInteractionTime.get(alumni.id) || 0;
+    
+    // Protection anti-spam : minimum 200ms entre les interactions pour la même carte
+    if (now - lastTime < 200) {
+      console.log(`Interaction trop rapide pour ${alumni.name}, ignorée (${now - lastTime}ms)`);
+      return;
+    }
+    
+    setLastInteractionTime(prev => new Map(prev).set(alumni.id, now));
+    
     console.log('Card clicked:', alumni.name, 'Device:', deviceType);
     
     const currentState = getCardState(alumni.id);

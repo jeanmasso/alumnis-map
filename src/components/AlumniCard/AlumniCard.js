@@ -1,8 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import './AlumniCard.css';
 
 const AlumniCard = ({ alumni, onClick, isSelected = false, isFlipped = false, cardState = 'front' }) => {
   const [isMobile, setIsMobile] = useState(false);
+  const [isInteractionInProgress, setIsInteractionInProgress] = useState(false);
+  const interactionTimeoutRef = useRef(null);
 
   // Détection améliorée du type d'appareil
   useEffect(() => {
@@ -21,14 +23,36 @@ const AlumniCard = ({ alumni, onClick, isSelected = false, isFlipped = false, ca
     return () => window.removeEventListener('resize', checkDeviceType);
   }, []);
 
-  // Gestionnaire unifié - plus de différenciation mobile/desktop
+  // Gestionnaire unifié avec protection anti-doublon mobile
   const handleCardClick = (e) => {
     e.stopPropagation();
-    console.log('AlumniCard clicked:', alumni.name);
+    
+    // Protection contre les doubles événements sur mobile
+    if (isInteractionInProgress) {
+      console.log('Interaction déjà en cours, ignoring click for', alumni.name);
+      return;
+    }
+    
+    console.log('AlumniCard clicked:', alumni.name, 'Device:', isMobile ? 'Mobile' : 'Desktop');
+    
+    // Marquer l'interaction comme en cours
+    setIsInteractionInProgress(true);
+    
+    // Exécuter l'action
     onClick(alumni);
+    
+    // Reset du flag avec délai plus long sur mobile
+    const delay = isMobile ? 300 : 100;
+    if (interactionTimeoutRef.current) {
+      clearTimeout(interactionTimeoutRef.current);
+    }
+    
+    interactionTimeoutRef.current = setTimeout(() => {
+      setIsInteractionInProgress(false);
+    }, delay);
   };
 
-  // Gestionnaire tactile simplifié
+  // Gestionnaire tactile - utilise la même logique mais avec flag spécial
   const handleTouchStart = (e) => {
     e.stopPropagation();
     
@@ -42,9 +66,9 @@ const AlumniCard = ({ alumni, onClick, isSelected = false, isFlipped = false, ca
     e.stopPropagation();
     e.preventDefault();
     
-    // Même logique que le clic
-    console.log('AlumniCard touched:', alumni.name);
-    onClick(alumni);
+    // Sur mobile, utiliser la même logique que le clic
+    console.log('AlumniCard touched (touchEnd):', alumni.name);
+    handleCardClick(e);
   };
 
   // Image par défaut si pas d'image fournie
@@ -55,13 +79,25 @@ const AlumniCard = ({ alumni, onClick, isSelected = false, isFlipped = false, ca
     return '/images/default-avatar.svg';
   };
 
+  // Nettoyage des timeouts
+  useEffect(() => {
+    return () => {
+      if (interactionTimeoutRef.current) {
+        clearTimeout(interactionTimeoutRef.current);
+      }
+    };
+  }, []);
+
   return (
     <div 
       className={`alumni-card ${isFlipped ? 'flipped' : ''} ${isSelected ? 'selected' : ''} ${isMobile ? 'mobile' : ''}`}
       data-card-state={cardState}
-      onClick={handleCardClick}
-      onTouchStart={handleTouchStart}
-      onTouchEnd={handleTouchEnd}
+      onClick={!isMobile ? handleCardClick : undefined}
+      onTouchStart={isMobile ? handleTouchStart : undefined}
+      onTouchEnd={isMobile ? handleTouchEnd : undefined}
+      style={{ 
+        pointerEvents: isInteractionInProgress ? 'none' : 'auto'
+      }}
     >
       <div className="card-content">
         {/* Face avant - Photo */}
