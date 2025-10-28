@@ -134,6 +134,7 @@ export const useDirectionalBubbles = (mapInstance, allAlumni, currentZoom, optio
     } finally {
       setIsUpdating(false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mapInstance, allAlumni, currentZoom, disabled, minZoom]); // Retirer displayDelayMs
 
   // Fonction pour gérer l'activité utilisateur
@@ -273,11 +274,13 @@ export const useDirectionalBubbles = (mapInstance, allAlumni, currentZoom, optio
         clearTimeout(activityTimeoutRef.current);
       }
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mapInstance, debouncedCalculate]); // Simplifier les dépendances
 
   // Effet pour recalculer quand les données changent
   useEffect(() => {
     calculateBubbleData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [allAlumni, currentZoom, disabled, calculateBubbleData]);
 
   // Fonction pour obtenir les informations d'une bulle spécifique

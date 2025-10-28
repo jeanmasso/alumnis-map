@@ -34,6 +34,7 @@ const AlumniMap = () => {
   const [displayMode, setDisplayMode] = useState('country'); // 'country', 'region', 'pins', 'individual'
   // États des cartes : 'front' (face) | 'back' (dos) | 'profile' (profil ouvert)
   const [cardStates, setCardStates] = useState(new Map()); // Map<alumniId, state>
+  // eslint-disable-next-line no-unused-vars
   const [flippedCards, setFlippedCards] = useState(new Set()); // Deprecated - kept for compatibility
   const [lastInteractionTime, setLastInteractionTime] = useState(new Map()); // Anti-spam protection // IDs des cartes retournées
 
@@ -594,6 +595,7 @@ const AlumniMap = () => {
     if (isFiltersOpen) {
       setIsFiltersOpen(false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isFiltersOpen]);
 
   // Fonction pour mettre à jour l'affichage selon le mode (pays/région/individuel)
@@ -791,6 +793,7 @@ const AlumniMap = () => {
         }
       });
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedAlumni, cardStates]);  // Ajouter cardStates pour déclencher re-rendu
 
   const returnToGlobalView = () => {
