@@ -1,0 +1,278 @@
+/* ===== DIRECTIONAL BUBBLES STYLES ===== */
+
+/* Container principal */
+.directional-bubbles-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  z-index: 1200;
+  
+  /* Variables CSS pour personnalisation facile */
+  --bubble-size: 40px;
+  --bubble-size-mobile: 35px;
+  --bubble-color: rgba(111, 66, 193, 0.9); /* Mauve uniforme */
+  --bubble-color-hover: rgba(111, 66, 193, 1);
+  --bubble-offset: 20px;
+  --bubble-offset-mobile: 15px;
+  --animation-duration: 2s;
+  --transition-duration: 0.3s;
+  --shadow-color: rgba(0, 0, 0, 0.2);
+  --shadow-color-hover: rgba(0, 0, 0, 0.3);
+  --text-color: #ffffff;
+  --border-radius: 50%;
+  --font-weight: bold;
+  --font-size: 14px;
+  --font-size-mobile: 12px;
+  --z-index-bubble: 1210;
+}
+
+/* Bulle directionnelle de base */
+.directional-bubble {
+  position: absolute;
+  background: var(--bubble-color);
+  color: var(--text-color);
+  width: var(--bubble-size);
+  height: var(--bubble-size);
+  border-radius: var(--border-radius);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: var(--font-weight);
+  font-size: var(--font-size);
+  box-shadow: 0 2px 8px var(--shadow-color);
+  cursor: pointer;
+  pointer-events: auto;
+  user-select: none;
+  transition: all var(--transition-duration) ease;
+  animation: pulse var(--animation-duration) infinite;
+  z-index: var(--z-index-bubble);
+  
+  /* Accessibilité */
+  outline: none;
+  border: 2px solid transparent;
+}
+
+/* États interactifs */
+.directional-bubble:hover,
+.directional-bubble:focus {
+  background: var(--bubble-color-hover);
+  transform: scale(1.15);
+  box-shadow: 0 4px 12px var(--shadow-color-hover);
+  animation: none; /* Arrêter l'animation pulse au hover */
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.directional-bubble:active {
+  transform: scale(1.05);
+  transition-duration: 0.1s;
+}
+
+/* Focus visible pour l'accessibilité */
+.directional-bubble:focus-visible {
+  border-color: rgba(255, 255, 255, 0.8);
+  box-shadow: 
+    0 4px 12px var(--shadow-color-hover),
+    0 0 0 3px rgba(255, 255, 255, 0.3);
+}
+
+/* Positionnement des bulles */
+.directional-bubble--north {
+  top: var(--bubble-offset);
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.directional-bubble--north:hover,
+.directional-bubble--north:focus {
+  transform: translateX(-50%) scale(1.15);
+}
+
+.directional-bubble--south {
+  bottom: calc(var(--bubble-offset) + 60px); /* Offset pour éviter les contrôles */
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.directional-bubble--south:hover,
+.directional-bubble--south:focus {
+  transform: translateX(-50%) scale(1.15);
+}
+
+.directional-bubble--east {
+  right: var(--bubble-offset);
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.directional-bubble--east:hover,
+.directional-bubble--east:focus {
+  transform: translateY(-50%) scale(1.15);
+}
+
+.directional-bubble--west {
+  left: var(--bubble-offset);
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.directional-bubble--west:hover,
+.directional-bubble--west:focus {
+  transform: translateY(-50%) scale(1.15);
+}
+
+/* Contenu de la bulle */
+.bubble-count {
+  display: block;
+  line-height: 1;
+  font-variant-numeric: tabular-nums; /* Chiffres alignés */
+}
+
+/* Animation pulse */
+@keyframes pulse {
+  0% { 
+    transform: scale(1); 
+    opacity: 0.9;
+  }
+  50% { 
+    transform: scale(1.08); 
+    opacity: 1;
+  }
+  100% { 
+    transform: scale(1); 
+    opacity: 0.9;
+  }
+}
+
+/* Variations de couleurs par direction (toutes en mauve maintenant) */
+.directional-bubble--north,
+.directional-bubble--south,
+.directional-bubble--east,
+.directional-bubble--west {
+  --bubble-color: rgba(111, 66, 193, 0.9); /* Mauve uniforme */
+  --bubble-color-hover: rgba(111, 66, 193, 1);
+  --text-color: #ffffff; /* Texte blanc sur fond mauve */
+}
+
+/* Indicateur de chargement */
+.bubble-loading {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+.loading-spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top: 2px solid rgba(255, 255, 255, 0.9);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Responsive - Mobile et tablette */
+@media (max-width: 768px) {
+  .directional-bubbles-container {
+    --bubble-size: var(--bubble-size-mobile);
+    --bubble-offset: var(--bubble-offset-mobile);
+    --font-size: var(--font-size-mobile);
+  }
+  
+  /* Ajustements de positionnement mobile */
+  .directional-bubble--south {
+    bottom: calc(var(--bubble-offset-mobile) + 80px); /* Plus d'espace sur mobile */
+  }
+  
+  /* Réduction de l'effet hover sur mobile */
+  .directional-bubble:hover {
+    transform: scale(1.1); /* Effet plus subtil */
+  }
+  
+  .directional-bubble--north:hover,
+  .directional-bubble--south:hover {
+    transform: translateX(-50%) scale(1.1);
+  }
+  
+  .directional-bubble--east:hover,
+  .directional-bubble--west:hover {
+    transform: translateY(-50%) scale(1.1);
+  }
+}
+
+/* Très petits écrans */
+@media (max-width: 480px) {
+  .directional-bubbles-container {
+    --bubble-size: 30px;
+    --bubble-offset: 10px;
+    --font-size: 11px;
+  }
+  
+  .directional-bubble--south {
+    bottom: calc(var(--bubble-offset) + 70px);
+  }
+}
+
+/* Mode sombre (si supporté par le parent) */
+@media (prefers-color-scheme: dark) {
+  .directional-bubbles-container {
+    --shadow-color: rgba(0, 0, 0, 0.4);
+    --shadow-color-hover: rgba(0, 0, 0, 0.6);
+  }
+}
+
+/* Réduction des animations pour l'accessibilité */
+@media (prefers-reduced-motion: reduce) {
+  .directional-bubble {
+    animation: none;
+    transition: transform 0.1s ease, background-color 0.1s ease;
+  }
+  
+  .loading-spinner {
+    animation: none;
+  }
+}
+
+/* Mode haute densité/retina */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  .directional-bubble {
+    /* Amélioration de la qualité sur écrans haute résolution */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+}
+
+/* Styles utilitaires pour personnalisation */
+.directional-bubbles-container.theme-minimal {
+  --bubble-color: rgba(0, 0, 0, 0.7);
+  --bubble-color-hover: rgba(0, 0, 0, 0.9);
+  --shadow-color: rgba(0, 0, 0, 0.1);
+}
+
+.directional-bubbles-container.no-animation .directional-bubble {
+  animation: none;
+}
+
+/* Debug info (masquée par défaut) */
+.debug-info {
+  position: fixed;
+  top: 10px;
+  right: 10px;
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 10px;
+  border-radius: 4px;
+  font-family: monospace;
+  font-size: 10px;
+  max-width: 300px;
+  z-index: 9999;
+  pointer-events: none;
+}

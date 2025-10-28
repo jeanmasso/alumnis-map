@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './AlumniCard.css';
 
-const AlumniCard = ({ alumni, onClick, isSelected = false }) => {
-  const [isFlipped, setIsFlipped] = useState(false);
+const AlumniCard = ({ alumni, onClick, isSelected = false, isFlipped = false }) => {
   const [isMobile, setIsMobile] = useState(false);
 
   // Détecter si on est sur mobile
@@ -18,49 +17,18 @@ const AlumniCard = ({ alumni, onClick, isSelected = false }) => {
   }, []);
 
   const handleCardClick = (e) => {
-    e.stopPropagation(); // Empêche la propagation vers la carte Leaflet
-    
-    if (isMobile) {
-      // Sur mobile : premier clic flip, deuxième clic ouvre le profil
-      if (!isFlipped) {
-        setIsFlipped(true);
-        // Auto-retour après 3 secondes si pas de deuxième clic
-        setTimeout(() => {
-          setIsFlipped(false);
-        }, 3000);
-      } else {
-        onClick(alumni);
-      }
-    } else {
-      // Sur desktop : clic direct ouvre le profil
-      onClick(alumni);
-    }
-  };
-
-  const handleCardHover = () => {
-    if (!isMobile) {
-      setIsFlipped(true);
-    }
-  };
-
-  const handleCardLeave = () => {
-    if (!isMobile) {
-      setIsFlipped(false);
-    }
+    e.stopPropagation();
+    onClick(); // Délègue au parent sans argument
   };
 
   // Gestion tactile pour mobile
   const handleTouchStart = (e) => {
-    if (isMobile) {
-      e.stopPropagation();
-    }
+    e.stopPropagation();
   };
 
   const handleTouchEnd = (e) => {
-    if (isMobile) {
-      e.stopPropagation();
-      handleCardClick(e);
-    }
+    e.stopPropagation();
+    onClick(); // Utilise la même logique que le clic
   };
 
   // Image par défaut si pas d'image fournie
@@ -75,8 +43,6 @@ const AlumniCard = ({ alumni, onClick, isSelected = false }) => {
     <div 
       className={`alumni-card ${isFlipped ? 'flipped' : ''} ${isSelected ? 'selected' : ''} ${isMobile ? 'mobile' : ''}`}
       onClick={handleCardClick}
-      onMouseEnter={handleCardHover}
-      onMouseLeave={handleCardLeave}
       onTouchStart={handleTouchStart}
       onTouchEnd={handleTouchEnd}
     >

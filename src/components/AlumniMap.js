@@ -4,8 +4,11 @@ import L from 'leaflet';
 import AlumniCard from './AlumniCard';
 import AlumniProfile from './AlumniProfile';
 import AlumniFilters from './AlumniFilters';
+import { useDirectionalBubbles } from '../hooks/useDirectionalBubbles';
+import { formatBubbleTooltip } from '../utils/geoBounds';
 import alumniService from '../services/alumniService';
 import geoService from '../services/geoService';
+import './DirectionalBubbles/DirectionalBubbles.css';
 import 'leaflet/dist/leaflet.css';
 
 // Fix pour les icônes par défaut de Leaflet
@@ -27,10 +30,94 @@ const AlumniMap = () => {
   const [isFiltersOpen, setIsFiltersOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [currentZoom, setCurrentZoom] = useState(2);
+  const [currentZoom, setCurrentZoom] = useState(3);
   const [displayMode, setDisplayMode] = useState('country'); // 'country', 'region', 'pins', 'individual'
+  const [flippedCards, setFlippedCards] = useState(new Set()); // IDs des cartes retournées
 
-  // ===== DÉFINITIONS DES FONCTIONS =====
+  // Fonction de navigation directionnelle (définie en premier pour le hook)
+  const handleDirectionalNavigation = useCallback((direction, bubbleInfo) => {
+    // Callback optionnel pour tracker/analyser les navigations directionnelles
+    console.log(`Navigation vers ${direction}:`, bubbleInfo);
+  }, []);
+
+  // Hook pour les bulles directionnelles
+  const { 
+    isActive: bubbleIsActive,
+    isUpdating: bubbleIsUpdating,
+    navigateToDirection,
+    getBubbleInfo,
+    isDirectionActive,
+    handleUserActivity 
+  } = useDirectionalBubbles(mapInstance.current, alumniData, currentZoom, {
+    minZoom: 3,
+    disabled: false,
+    onNavigate: handleDirectionalNavigation
+  });
+
+  // Fonction de gestion du clic sur une bulle (définie APRÈS le hook)
+  const handleBubbleClick = useCallback((direction) => {
+    const success = navigateToDirection(direction);
+    
+    // Callback optionnel pour le parent
+    if (success) {
+      const bubbleInfo = getBubbleInfo(direction);
+      handleDirectionalNavigation(direction, bubbleInfo);
+    }
+  }, [navigateToDirection, getBubbleInfo, handleDirectionalNavigation]);
+
+  // Fonction de rendu d'une bulle individuelle
+  const renderBubble = useCallback((direction) => {
+    if (!isDirectionActive(direction)) {
+      return null;
+    }
+
+    const bubbleInfo = getBubbleInfo(direction);
+    const { count, alumniList } = bubbleInfo;
+    
+    const tooltipText = formatBubbleTooltip(direction, count, alumniList);
+
+    return (
+      <div
+        key={direction}
+        className={`directional-bubble directional-bubble--${direction}`}
+        onClick={() => handleBubbleClick(direction)}
+        title={tooltipText}
+        aria-label={`${count} alumni vers le ${direction === 'north' ? 'nord' : 
+                                                direction === 'south' ? 'sud' : 
+                                                direction === 'east' ? 'est' : 'ouest'}`}
+        role="button"
+        tabIndex={0}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            handleBubbleClick(direction);
+          }
+        }}
+        style={{
+          position: 'absolute',
+          width: '50px',
+          height: '50px',
+          borderRadius: '50%',
+          backgroundColor: 'rgba(111, 66, 193, 0.9)',
+          color: 'white',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          cursor: 'pointer',
+          zIndex: 1000,
+          fontWeight: 'bold',
+          fontSize: '14px',
+          border: '2px solid white',
+          boxShadow: '0 2px 8px rgba(0,0,0,0.3)',
+          transition: 'all 0.3s ease'
+        }}
+      >
+        <span>{count}</span>
+      </div>
+    );
+  }, [isDirectionActive, getBubbleInfo, handleBubbleClick]);
+
+  // ===== CHARGEMENT INITIAL DES DONNÉES =====
   
   // Gestion des filtres
   const handleFilterChange = useCallback((filters) => {
@@ -365,8 +452,9 @@ const AlumniMap = () => {
         root.render(
           <AlumniCard 
             alumni={alumni}
-            onClick={handleAlumniCardClick}
+            onClick={() => handleAlumniCardClick(alumni)}
             isSelected={selectedAlumni?.id === alumni.id}
+            isFlipped={flippedCards.has(alumni.id)}
           />
         );
 
@@ -393,9 +481,25 @@ const AlumniMap = () => {
   };
 
   const handleAlumniCardClick = (alumni) => {
-    setSelectedAlumni(alumni);
-    setIsPanelOpen(true);
+    const isFlipped = flippedCards.has(alumni.id);
+    
+    if (!isFlipped) {
+      // Premier clic : retourner la carte
+      setFlippedCards(prev => new Set(prev).add(alumni.id));
+    } else {
+      // Deuxième clic : ouvrir le profil
+      setSelectedAlumni(alumni);
+      setIsPanelOpen(true);
+      // Optionnel : garder la carte retournée ou la remettre à l'endroit
+      // setFlippedCards(prev => { const newSet = new Set(prev); newSet.delete(alumni.id); return newSet; });
+    }
   };
+
+  // Fonction pour gérer les clics à l'extérieur des cartes
+  const handleMapClick = useCallback(() => {
+    // Remettre toutes les cartes à l'endroit
+    setFlippedCards(new Set());
+  }, []);
 
   // Fonction pour mettre à jour l'affichage selon le mode (pays/région/individuel)
   const updateMarkersDisplay = useCallback(() => {
@@ -487,6 +591,32 @@ const AlumniMap = () => {
         setCurrentZoom(zoom);
         const newDisplayMode = geoService.getDisplayLevel(zoom);
         setDisplayMode(newDisplayMode);
+        
+        // Détecter l'activité utilisateur
+        if (handleUserActivity) {
+          handleUserActivity();
+        }
+      });
+
+      // Gestion des événements de déplacement de la carte
+      mapInstance.current.on('moveend', () => {
+        // Détecter l'activité utilisateur
+        if (handleUserActivity) {
+          handleUserActivity();
+        }
+      });
+
+      // Gestion des interactions de base (drag, pan, etc.)
+      mapInstance.current.on('drag', () => {
+        if (handleUserActivity) {
+          handleUserActivity();
+        }
+      });
+
+      mapInstance.current.on('click', () => {
+        if (handleUserActivity) {
+          handleUserActivity();
+        }
       });
 
       // Ajouter les marqueurs pour chaque alumni une fois les données chargées
@@ -556,8 +686,9 @@ const AlumniMap = () => {
             marker.reactRoot.render(
               <AlumniCard 
                 alumni={marker.alumni}
-                onClick={handleAlumniCardClick}
+                onClick={() => handleAlumniCardClick(marker.alumni)}
                 isSelected={marker.alumni.id === (selectedAlumni?.id || null)}
+                isFlipped={flippedCards.has(marker.alumni.id)}
               />
             );
           } catch (error) {
@@ -721,6 +852,16 @@ const AlumniMap = () => {
         onClose={closePanel}
         onContactClick={handleContactAlumni}
       />
+
+      {/* Bulles directionnelles pour indiquer les alumni hors-zone */}
+      {bubbleIsActive && !bubbleIsUpdating && (
+        <div className="directional-bubbles-container">
+          {renderBubble('north')}
+          {renderBubble('south')}
+          {renderBubble('east')}
+          {renderBubble('west')}
+        </div>
+      )}
     </div>
   );
 };

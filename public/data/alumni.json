@@ -145,22 +145,6 @@
       "linkedin": "Judicaël Pihahuna"
     },
     {
-      "id": 45,
-      "name": "CHANTREUX",
-      "firstname": "Léa",
-      "position": "Apprenti en alternance",
-      "company": "Pharmacie de Port plaisance",
-      "adress": "Centre commercial port plaisance, 10 Rue Jules Garnier, Nouméa 98800, Nouvelle-Calédonie",
-      "location": "Nouméa, Nouvelle-Calédonie",
-      "coordinates": [-22.27771, 166.43825],
-      "country": "Nouvelle-Calédonie",
-      "city": "Nouméa",
-      "graduationYear": 2023,
-      "promotionType": "LP RÉVISION COMPTABLE",
-      "image": "",
-      "linkedin": "Léa CHANTREUX"
-    },
-    {
       "id": 40,
       "name": "CURÉ",
       "firstname": "Medge",
@@ -207,38 +191,6 @@
       "promotionType": "DUT-BUT MMI",
       "image": "",
       "linkedin": "Kenny Ayam"
-    },
-    {
-      "id": 23,
-      "name": "ALET",
-      "firstname": "Fleur",
-      "position": "Croupière",
-      "company": "Casinos de Nouméa",
-      "adress": "5 promenade Pierre Vernier,  Nouméa,  98800, NC",
-      "location": "Nouméa, Nouvelle-Calédonie",
-      "coordinates": [-22.30942, 166.36909],
-      "country": "Nouvelle-Calédonie",
-      "city": "Nouméa",
-      "graduationYear": 2019,
-      "promotionType": "DUT MMI + LP MIAW",
-      "image": "",
-      "linkedin": "Fleur Alet"
-    },
-    {
-      "id": 25,
-      "name": "CHARDON",
-      "firstname": "Élodie",
-      "position": "Comptable unique",
-      "company": "Groupe HBO",
-      "adress": "202 Rue Roger Gervolino, Nouméa, Province sud 98800, NC",
-      "location": "Nouméa, Nouvelle-Calédonie",
-      "coordinates": [-22.27038, 166.44146],
-      "country": "Nouvelle-Calédonie",
-      "city": "Nouméa",
-      "graduationYear": 2022,
-      "promotionType": "LP RÉVISION COMPTABLE",
-      "image": "",
-      "linkedin": "Élodie C."
     },
     {
       "id": 28,
@@ -498,7 +450,7 @@
     }
   ],
   "metadata": {
-    "totalCount": 30,
+    "totalCount": 27,
     "lastUpdated": "2025-10-17T15:00:00Z",
     "version": "1.2"
   }
