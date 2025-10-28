@@ -38,16 +38,7 @@ const DirectionalBubbles = ({
     return null;
   }
 
-  // Gestion du clic sur une bulle
-  const handleBubbleClick = (direction) => {
-    const success = navigateToDirection(direction);
-    
-    // Callback optionnel pour le parent
-    if (success && onNavigate) {
-      const bubbleInfo = getBubbleInfo(direction);
-      onNavigate(direction, bubbleInfo);
-    }
-  };
+  // Les bulles ne sont plus cliquables - supprimé handleBubbleClick
 
   // Rendu d'une bulle individuelle
   const renderBubble = (direction) => {
@@ -68,19 +59,10 @@ const DirectionalBubbles = ({
           directional-bubble--${direction} 
           ${bubbleClassName}
         `.trim()}
-        onClick={() => handleBubbleClick(direction)}
         title={tooltipText}
         aria-label={`${count} alumni vers le ${direction === 'north' ? 'nord' : 
                                                 direction === 'south' ? 'sud' : 
                                                 direction === 'east' ? 'est' : 'ouest'}`}
-        role="button"
-        tabIndex={0}
-        onKeyDown={(e) => {
-          if (e.key === 'Enter' || e.key === ' ') {
-            e.preventDefault();
-            handleBubbleClick(direction);
-          }
-        }}
       >
         <span className="bubble-count">{count}</span>
         

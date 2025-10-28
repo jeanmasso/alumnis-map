@@ -6,16 +6,31 @@
   position: relative;
   transition: transform 0.2s ease;
   z-index: 1000;
+  animation: cardAppear 0.5s ease-out;
 }
 
-.alumni-card:hover {
+/* Interactions souris optimisées pour desktop */
+.alumni-card:not(.mobile):hover {
   transform: scale(1.05);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.alumni-card:hover .card-content {
+.alumni-card:not(.mobile):hover .card-content {
   box-shadow: 
     0 6px 20px rgba(106, 32, 140, 0.5),
     inset 0 2px 4px rgba(255, 255, 255, 0.3);
+}
+
+/* État focus pour accessibilité clavier */
+.alumni-card:not(.mobile):focus {
+  outline: 2px solid rgba(111, 66, 193, 0.8);
+  outline-offset: 2px;
+}
+
+/* Animation au clic pour feedback immédiat */
+.alumni-card:not(.mobile):active {
+  transform: scale(0.98);
+  transition: transform 0.1s ease;
 }
 
 .alumni-card.selected {
@@ -163,11 +178,6 @@
   overflow: hidden;
 }
 
-/* Animation d'apparition */
-.alumni-card {
-  animation: cardAppear 0.5s ease-out;
-}
-
 @keyframes cardAppear {
   from {
     opacity: 0;
@@ -208,14 +218,24 @@
 .alumni-card.mobile {
   touch-action: manipulation;
   -webkit-tap-highlight-color: transparent;
+  -webkit-user-select: none;
+  user-select: none;
+  cursor: default; /* Pas de pointeur sur tactile */
 }
 
 .alumni-card.mobile:hover {
   transform: none; /* Désactive le hover sur mobile */
 }
 
+/* Animation tactile avec feedback renforcé */
 .alumni-card.mobile.flipped {
-  animation: mobileFlipIn 0.4s ease-out;
+  animation: mobileFlipIn 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+/* États tactiles avec feedback visuel */
+.alumni-card.mobile:active {
+  transform: scale(0.95);
+  transition: transform 0.1s ease;
 }
 
 @keyframes mobileFlipIn {
@@ -230,35 +250,137 @@
   }
 }
 
-/* Indicateur visuel pour le double-tap sur mobile */
+/* Indicateurs visuels différenciés selon le contexte */
 .alumni-card.mobile:not(.flipped)::after {
   content: "👆";
   position: absolute;
-  top: -5px;
-  right: -5px;
-  font-size: 12px;
-  background: rgba(255, 255, 255, 0.9);
+  top: -8px;
+  right: -8px;
+  font-size: 14px;
+  background: linear-gradient(135deg, rgba(111, 66, 193, 0.9), rgba(155, 89, 182, 0.9));
   border-radius: 50%;
-  width: 20px;
-  height: 20px;
+  width: 24px;
+  height: 24px;
   display: flex;
   align-items: center;
   justify-content: center;
-  animation: pulse 2s infinite;
+  animation: tacticePulse 2s infinite;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  border: 2px solid rgba(255, 255, 255, 0.8);
 }
 
-@keyframes pulse {
+@keyframes tacticePulse {
   0%, 100% {
-    opacity: 0.7;
+    opacity: 0.8;
     transform: scale(1);
   }
   50% {
     opacity: 1;
-    transform: scale(1.1);
+    transform: scale(1.2);
   }
 }
 
 .alumni-card.mobile.flipped::after {
-  content: "👆👆";
-  font-size: 10px;
+  content: "�";
+  font-size: 12px;
+  background: linear-gradient(135deg, rgba(46, 204, 113, 0.9), rgba(39, 174, 96, 0.9));
+  animation: tacticePulse 1.5s infinite;
+}
+
+/* Nouveaux indicateurs basés sur l'état avec data-card-state */
+.alumni-card.mobile[data-card-state="front"]::after {
+  content: "👆";
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  font-size: 14px;
+  background: linear-gradient(135deg, rgba(111, 66, 193, 0.9), rgba(155, 89, 182, 0.9));
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: tacticePulse 2s infinite;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  border: 2px solid rgba(255, 255, 255, 0.8);
+}
+
+.alumni-card.mobile[data-card-state="back"]::after {
+  content: "🔍";
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  font-size: 14px;
+  background: linear-gradient(135deg, rgba(46, 204, 113, 0.9), rgba(39, 174, 96, 0.9));
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: tacticePulse 1.5s infinite;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  border: 2px solid rgba(255, 255, 255, 0.8);
+}
+
+/* Indicateurs subtils pour desktop */
+.alumni-card:not(.mobile):not(.flipped):hover::before {
+  content: "👁️";
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  font-size: 12px;
+  background: rgba(111, 66, 193, 0.9);
+  color: white;
+  border-radius: 50%;
+  width: 18px;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  animation: desktopHoverIn 0.3s ease forwards;
+  z-index: 10;
+}
+
+.alumni-card:not(.mobile).flipped:hover::before {
+  content: "🔍";
+  animation: desktopHoverIn 0.3s ease forwards;
+}
+
+@keyframes desktopHoverIn {
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Animation de succès pour l'ouverture du profil */
+.alumni-card.opening-profile {
+  animation: successPulse 0.6s ease;
+}
+
+@keyframes successPulse {
+  0% { transform: scale(1); }
+  25% { transform: scale(1.1); filter: brightness(1.2); }
+  50% { transform: scale(1.05); filter: brightness(1.1); }
+  100% { transform: scale(1); filter: brightness(1); }
+}
+
+/* Responsive optimisations */
+@media (max-width: 768px) {
+  .alumni-card.mobile::after {
+    width: 22px;
+    height: 22px;
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 480px) {
+  .alumni-card.mobile::after {
+    width: 20px;
+    height: 20px;
+    font-size: 12px;
+  }
 }

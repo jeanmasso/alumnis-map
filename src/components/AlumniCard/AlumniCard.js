@@ -1,34 +1,50 @@
 import React, { useState, useEffect } from 'react';
 import './AlumniCard.css';
 
-const AlumniCard = ({ alumni, onClick, isSelected = false, isFlipped = false }) => {
+const AlumniCard = ({ alumni, onClick, isSelected = false, isFlipped = false, cardState = 'front' }) => {
   const [isMobile, setIsMobile] = useState(false);
 
-  // Détecter si on est sur mobile
+  // Détection améliorée du type d'appareil
   useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth <= 768 || 'ontouchstart' in window);
+    const checkDeviceType = () => {
+      const hasTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+      const isSmallScreen = window.innerWidth <= 768;
+      const isMobileUA = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+      
+      // Considérer comme mobile si : écran tactile OU petit écran OU user agent mobile
+      setIsMobile(hasTouch || isSmallScreen || isMobileUA);
     };
     
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
+    checkDeviceType();
+    window.addEventListener('resize', checkDeviceType);
     
-    return () => window.removeEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkDeviceType);
   }, []);
 
+  // Gestionnaire unifié - plus de différenciation mobile/desktop
   const handleCardClick = (e) => {
     e.stopPropagation();
-    onClick(); // Délègue au parent sans argument
+    console.log('AlumniCard clicked:', alumni.name);
+    onClick(alumni);
   };
 
-  // Gestion tactile pour mobile
+  // Gestionnaire tactile simplifié
   const handleTouchStart = (e) => {
     e.stopPropagation();
+    
+    // Feedback haptique léger
+    if (navigator.vibrate) {
+      navigator.vibrate(10);
+    }
   };
 
   const handleTouchEnd = (e) => {
     e.stopPropagation();
-    onClick(); // Utilise la même logique que le clic
+    e.preventDefault();
+    
+    // Même logique que le clic
+    console.log('AlumniCard touched:', alumni.name);
+    onClick(alumni);
   };
 
   // Image par défaut si pas d'image fournie
@@ -42,6 +58,7 @@ const AlumniCard = ({ alumni, onClick, isSelected = false, isFlipped = false }) 
   return (
     <div 
       className={`alumni-card ${isFlipped ? 'flipped' : ''} ${isSelected ? 'selected' : ''} ${isMobile ? 'mobile' : ''}`}
+      data-card-state={cardState}
       onClick={handleCardClick}
       onTouchStart={handleTouchStart}
       onTouchEnd={handleTouchEnd}

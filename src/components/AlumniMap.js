@@ -32,7 +32,9 @@ const AlumniMap = () => {
   const [error, setError] = useState(null);
   const [currentZoom, setCurrentZoom] = useState(3);
   const [displayMode, setDisplayMode] = useState('country'); // 'country', 'region', 'pins', 'individual'
-  const [flippedCards, setFlippedCards] = useState(new Set()); // IDs des cartes retournées
+  // États des cartes : 'front' (face) | 'back' (dos) | 'profile' (profil ouvert)
+  const [cardStates, setCardStates] = useState(new Map()); // Map<alumniId, state>
+  const [flippedCards, setFlippedCards] = useState(new Set()); // Deprecated - kept for compatibility // IDs des cartes retournées
 
   // Fonction de navigation directionnelle (définie en premier pour le hook)
   const handleDirectionalNavigation = useCallback((direction, bubbleInfo) => {
@@ -452,9 +454,10 @@ const AlumniMap = () => {
         root.render(
           <AlumniCard 
             alumni={alumni}
-            onClick={() => handleAlumniCardClick(alumni)}
+            onClick={handleAlumniCardClick}
             isSelected={selectedAlumni?.id === alumni.id}
-            isFlipped={flippedCards.has(alumni.id)}
+            isFlipped={getCardState(alumni.id) !== 'front'}
+            cardState={getCardState(alumni.id)}
           />
         );
 
@@ -480,26 +483,105 @@ const AlumniMap = () => {
     }
   };
 
-  const handleAlumniCardClick = (alumni) => {
-    const isFlipped = flippedCards.has(alumni.id);
+  // Fonction pour obtenir l'état d'une carte
+  const getCardState = (alumniId) => {
+    const state = cardStates.get(alumniId) || 'front';
+    console.log(`getCardState(${alumniId}): ${state}`);
+    return state;
+  };
+
+  // Fonction pour mettre à jour l'état d'une carte
+  const setCardState = (alumniId, newState) => {
+    console.log(`setCardState called with:`, { alumniId, type: typeof alumniId, newState });
+    console.log(`Card ${alumniId} state: ${getCardState(alumniId)} → ${newState}`);
+    setCardStates(prev => {
+      const newMap = new Map(prev);
+      newMap.set(alumniId, newState);
+      console.log('New cardStates Map:', newMap);
+      return newMap;
+    });
     
-    if (!isFlipped) {
-      // Premier clic : retourner la carte
-      setFlippedCards(prev => new Set(prev).add(alumni.id));
+    // Maintenir la compatibilité avec flippedCards
+    if (newState === 'back' || newState === 'profile') {
+      setFlippedCards(prev => new Set(prev).add(alumniId));
     } else {
-      // Deuxième clic : ouvrir le profil
-      setSelectedAlumni(alumni);
-      setIsPanelOpen(true);
-      // Optionnel : garder la carte retournée ou la remettre à l'endroit
-      // setFlippedCards(prev => { const newSet = new Set(prev); newSet.delete(alumni.id); return newSet; });
+      setFlippedCards(prev => {
+        const newSet = new Set(prev);
+        newSet.delete(alumniId);
+        return newSet;
+      });
+    }
+  };
+
+  // Fonction pour réinitialiser toutes les cartes à l'état 'front'
+  const resetAllCards = () => {
+    console.log('resetAllCards called - clearing all card states');
+    console.log('Current cardStates before reset:', cardStates);
+    setCardStates(new Map());
+    setFlippedCards(new Set());
+    setSelectedAlumni(null);
+    setIsPanelOpen(false);
+    console.log('All cards reset to front state');
+  };
+
+  // Nouvelle logique de gestion des clics avec machine à états
+  const handleAlumniCardClick = (alumni) => {
+    const deviceType = /Mobile|Android|iPhone|iPad/.test(navigator.userAgent) ? 'Mobile' : 'Desktop';
+    console.log('Card clicked:', alumni.name, 'Device:', deviceType);
+    
+    const currentState = getCardState(alumni.id);
+    console.log('Current state:', currentState);
+    
+    // Machine à états : transitions possibles
+    switch (currentState) {
+      case 'front':
+        // Face → Dos : retourner la carte
+        console.log('ACTION: Flipping to back');
+        setCardState(alumni.id, 'back');
+        
+        // Feedback haptique sur mobile
+        if (navigator.vibrate && deviceType === 'Mobile') {
+          navigator.vibrate(20);
+        }
+        break;
+        
+      case 'back':
+        // Dos → Profil : ouvrir le profil
+        console.log('ACTION: Opening profile');
+        setCardState(alumni.id, 'profile');
+        setSelectedAlumni(alumni);
+        setIsPanelOpen(true);
+        
+        // Feedback haptique plus fort sur mobile
+        if (navigator.vibrate && deviceType === 'Mobile') {
+          navigator.vibrate([10, 50, 10]);
+        }
+        break;
+        
+      case 'profile':
+        // Profil → Face : fermer le profil et remettre à l'état initial
+        console.log('ACTION: Closing profile, back to front');
+        setCardState(alumni.id, 'front');
+        setSelectedAlumni(null);
+        setIsPanelOpen(false);
+        break;
+        
+      default:
+        console.warn('Unknown card state:', currentState);
+        setCardState(alumni.id, 'front');
     }
   };
 
   // Fonction pour gérer les clics à l'extérieur des cartes
   const handleMapClick = useCallback(() => {
-    // Remettre toutes les cartes à l'endroit
-    setFlippedCards(new Set());
-  }, []);
+    console.log('Map clicked - resetting cards and closing filters');
+    // Remettre toutes les cartes à l'état 'front'
+    resetAllCards();
+    // Fermer les filtres s'ils sont ouverts
+    if (isFiltersOpen) {
+      setIsFiltersOpen(false);
+    }
+  }, [isFiltersOpen]);
 
   // Fonction pour mettre à jour l'affichage selon le mode (pays/région/individuel)
   const updateMarkersDisplay = useCallback(() => {
@@ -659,12 +741,7 @@ const AlumniMap = () => {
   // useEffect pour gérer la fermeture du menu de filtres au clic sur la carte
   useEffect(() => {
     if (mapInstance.current) {
-      const handleMapClick = () => {
-        if (isFiltersOpen) {
-          setIsFiltersOpen(false);
-        }
-      };
-
+      // Gestionnaire unifié pour les clics sur la carte
       mapInstance.current.on('click', handleMapClick);
       
       return () => {
@@ -673,22 +750,26 @@ const AlumniMap = () => {
         }
       };
     }
-  }, [isFiltersOpen]);
+  }, [handleMapClick]);
 
-  // useEffect séparé pour mettre à jour l'état des cartes quand selectedAlumni change
+  // useEffect séparé pour mettre à jour l'état des cartes quand selectedAlumni ou cardStates change
   useEffect(() => {
+    console.log('Re-rendering markers due to state change. CardStates:', cardStates);
+    
     // Utiliser requestAnimationFrame pour éviter les race conditions
     requestAnimationFrame(() => {
       markersRef.current.forEach(marker => {
         if (marker.reactRoot && marker.alumni) {
           try {
+            console.log(`Updating marker for alumni ${marker.alumni.id}, state: ${getCardState(marker.alumni.id)}`);
             // Recréer seulement le contenu React avec le nouvel état
             marker.reactRoot.render(
               <AlumniCard 
                 alumni={marker.alumni}
-                onClick={() => handleAlumniCardClick(marker.alumni)}
+                onClick={handleAlumniCardClick}
                 isSelected={marker.alumni.id === (selectedAlumni?.id || null)}
-                isFlipped={flippedCards.has(marker.alumni.id)}
+                isFlipped={getCardState(marker.alumni.id) !== 'front'}
+                cardState={getCardState(marker.alumni.id)}
               />
             );
           } catch (error) {
@@ -697,7 +778,7 @@ const AlumniMap = () => {
         }
       });
     });
-  }, [selectedAlumni]);  // eslint-disable-line react-hooks/exhaustive-deps
+  }, [selectedAlumni, cardStates]);  // Ajouter cardStates pour déclencher re-rendu
 
   const returnToGlobalView = () => {
     // Retourner à la vue globale (zoom niveau 3)
@@ -834,7 +915,18 @@ const AlumniMap = () => {
       </div>
 
       {/* Container de la carte */}
-      <div ref={mapRef} style={{ height: '100%', width: '100%' }} />
+      <div 
+        ref={mapRef} 
+        style={{ height: '100%', width: '100%' }}
+        onClick={(e) => {
+          // Backup handler si le clic Leaflet ne fonctionne pas
+          console.log('Map container clicked', e.target);
+          // Seulement si le clic est directement sur le container de la carte
+          if (e.target === mapRef.current || e.target.classList.contains('leaflet-container')) {
+            handleMapClick();
+          }
+        }}
+      />
 
       {/* Image "Découvrez nos alumnis" - purement décorative */}
       <div className="discover-alumni-overlay">

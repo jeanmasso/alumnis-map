@@ -43,39 +43,10 @@
   font-weight: var(--font-weight);
   font-size: var(--font-size);
   box-shadow: 0 2px 8px var(--shadow-color);
-  cursor: pointer;
-  pointer-events: auto;
+  pointer-events: none; /* Plus cliquable */
   user-select: none;
-  transition: all var(--transition-duration) ease;
   animation: pulse var(--animation-duration) infinite;
   z-index: var(--z-index-bubble);
-  
-  /* Accessibilité */
-  outline: none;
-  border: 2px solid transparent;
-}
-
-/* États interactifs */
-.directional-bubble:hover,
-.directional-bubble:focus {
-  background: var(--bubble-color-hover);
-  transform: scale(1.15);
-  box-shadow: 0 4px 12px var(--shadow-color-hover);
-  animation: none; /* Arrêter l'animation pulse au hover */
-  border-color: rgba(255, 255, 255, 0.3);
-}
-
-.directional-bubble:active {
-  transform: scale(1.05);
-  transition-duration: 0.1s;
-}
-
-/* Focus visible pour l'accessibilité */
-.directional-bubble:focus-visible {
-  border-color: rgba(255, 255, 255, 0.8);
-  box-shadow: 
-    0 4px 12px var(--shadow-color-hover),
-    0 0 0 3px rgba(255, 255, 255, 0.3);
 }
 
 /* Positionnement des bulles */
@@ -85,20 +56,10 @@
   transform: translateX(-50%);
 }
 
-.directional-bubble--north:hover,
-.directional-bubble--north:focus {
-  transform: translateX(-50%) scale(1.15);
-}
-
 .directional-bubble--south {
   bottom: calc(var(--bubble-offset) + 60px); /* Offset pour éviter les contrôles */
   left: 50%;
   transform: translateX(-50%);
-}
-
-.directional-bubble--south:hover,
-.directional-bubble--south:focus {
-  transform: translateX(-50%) scale(1.15);
 }
 
 .directional-bubble--east {
@@ -107,20 +68,10 @@
   transform: translateY(-50%);
 }
 
-.directional-bubble--east:hover,
-.directional-bubble--east:focus {
-  transform: translateY(-50%) scale(1.15);
-}
-
 .directional-bubble--west {
   left: var(--bubble-offset);
   top: 50%;
   transform: translateY(-50%);
-}
-
-.directional-bubble--west:hover,
-.directional-bubble--west:focus {
-  transform: translateY(-50%) scale(1.15);
 }
 
 /* Contenu de la bulle */
@@ -191,21 +142,6 @@
   .directional-bubble--south {
     bottom: calc(var(--bubble-offset-mobile) + 80px); /* Plus d'espace sur mobile */
   }
-  
-  /* Réduction de l'effet hover sur mobile */
-  .directional-bubble:hover {
-    transform: scale(1.1); /* Effet plus subtil */
-  }
-  
-  .directional-bubble--north:hover,
-  .directional-bubble--south:hover {
-    transform: translateX(-50%) scale(1.1);
-  }
-  
-  .directional-bubble--east:hover,
-  .directional-bubble--west:hover {
-    transform: translateY(-50%) scale(1.1);
-  }
 }
 
 /* Très petits écrans */
@@ -233,7 +169,6 @@
 @media (prefers-reduced-motion: reduce) {
   .directional-bubble {
     animation: none;
-    transition: transform 0.1s ease, background-color 0.1s ease;
   }
   
   .loading-spinner {
