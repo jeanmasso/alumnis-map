@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import './AlumniCard.css';
+import { alumniImages } from '../../assets/images/alumni';
 
 const AlumniCard = ({ alumni, onClick, isSelected = false, isFlipped = false, cardState = 'front' }) => {
   const [isMobile, setIsMobile] = useState(false);
@@ -73,8 +74,8 @@ const AlumniCard = ({ alumni, onClick, isSelected = false, isFlipped = false, ca
 
   // Image par défaut si pas d'image fournie
   const getImageSrc = () => {
-    if (alumni.image) {
-      return `/images/alumni/${alumni.image}`;
+    if (alumni.image && alumniImages[alumni.image]) {
+      return alumniImages[alumni.image];
     }
     return '/images/default-avatar.svg';
   };

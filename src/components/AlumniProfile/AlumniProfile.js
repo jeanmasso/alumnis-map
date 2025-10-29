@@ -1,21 +1,24 @@
 import React from 'react';
 import './AlumniProfile.css';
+import { alumniImages } from '../../assets/images/alumni';
 
-const AlumniProfile = ({ alumni, isOpen, onClose, onContactClick }) => {
+const AlumniProfile = ({ alumni, isOpen, onClose }) => {
+  console.log('AlumniProfile rendered with:', { alumni: alumni?.name, isOpen });
+  
   if (!alumni) return null;
 
   const getImageSrc = () => {
     if (alumni.image) {
-      return `/images/alumni/${alumni.image}`;
+      // Vérifier si l'image existe dans notre mapping
+      if (alumniImages[alumni.image])
+        return alumniImages[alumni.image];
+      else 
+        return '/images/default-avatar.svg';
     }
     return '/images/default-avatar.svg';
   };
 
-  const handleContactClick = () => {
-    if (onContactClick) {
-      onContactClick(alumni);
-    }
-  };
+
 
   return (
     <div className={`alumni-profile ${isOpen ? 'open' : 'closed'}`}>
@@ -81,28 +84,9 @@ const AlumniProfile = ({ alumni, isOpen, onClose, onContactClick }) => {
           <div className="academic-info">
             <div className="academic-item">
               <span className="academic-year">{alumni.graduationYear}</span>
-              <span className="academic-degree">Diplômé(e)</span>
+              <span className="academic-degree">Diplômé(e) en {alumni.promotionType}</span>
             </div>
           </div>
-        </div>
-
-        {/* Actions */}
-        <div className="profile-actions">
-          <button 
-            className="action-button primary"
-            onClick={handleContactClick}
-          >
-            <span className="action-icon">📧</span>
-            Contacter
-          </button>
-          <button className="action-button secondary">
-            <span className="action-icon">💼</span>
-            LinkedIn
-          </button>
-          <button className="action-button secondary">
-            <span className="action-icon">🌐</span>
-            Portfolio
-          </button>
         </div>
 
         {/* Coordonnées (optionnel) */}

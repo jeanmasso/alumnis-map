@@ -488,18 +488,14 @@ const AlumniMap = () => {
   // Fonction pour obtenir l'état d'une carte
   const getCardState = (alumniId) => {
     const state = cardStates.get(alumniId) || 'front';
-    console.log(`getCardState(${alumniId}): ${state}`);
     return state;
   };
 
   // Fonction pour mettre à jour l'état d'une carte
   const setCardState = (alumniId, newState) => {
-    console.log(`setCardState called with:`, { alumniId, type: typeof alumniId, newState });
-    console.log(`Card ${alumniId} state: ${getCardState(alumniId)} → ${newState}`);
     setCardStates(prev => {
       const newMap = new Map(prev);
       newMap.set(alumniId, newState);
-      console.log('New cardStates Map:', newMap);
       return newMap;
     });
     
@@ -517,14 +513,11 @@ const AlumniMap = () => {
 
   // Fonction pour réinitialiser toutes les cartes à l'état 'front'
   const resetAllCards = () => {
-    console.log('resetAllCards called - clearing all card states');
-    console.log('Current cardStates before reset:', cardStates);
     setCardStates(new Map());
     setFlippedCards(new Set());
     setLastInteractionTime(new Map()); // Reset timestamps aussi
     setSelectedAlumni(null);
     setIsPanelOpen(false);
-    console.log('All cards reset to front state');
   };
 
   // Nouvelle logique de gestion des clics avec machine à états
@@ -540,17 +533,13 @@ const AlumniMap = () => {
     }
     
     setLastInteractionTime(prev => new Map(prev).set(alumni.id, now));
-    
-    console.log('Card clicked:', alumni.name, 'Device:', deviceType);
-    
+  
     const currentState = getCardState(alumni.id);
-    console.log('Current state:', currentState);
     
     // Machine à états : transitions possibles
     switch (currentState) {
       case 'front':
         // Face → Dos : retourner la carte
-        console.log('ACTION: Flipping to back');
         setCardState(alumni.id, 'back');
         
         // Feedback haptique sur mobile
@@ -561,7 +550,6 @@ const AlumniMap = () => {
         
       case 'back':
         // Dos → Profil : ouvrir le profil
-        console.log('ACTION: Opening profile');
         setCardState(alumni.id, 'profile');
         setSelectedAlumni(alumni);
         setIsPanelOpen(true);
@@ -574,7 +562,6 @@ const AlumniMap = () => {
         
       case 'profile':
         // Profil → Face : fermer le profil et remettre à l'état initial
-        console.log('ACTION: Closing profile, back to front');
         setCardState(alumni.id, 'front');
         setSelectedAlumni(null);
         setIsPanelOpen(false);
@@ -588,7 +575,6 @@ const AlumniMap = () => {
 
   // Fonction pour gérer les clics à l'extérieur des cartes
   const handleMapClick = useCallback(() => {
-    console.log('Map clicked - resetting cards and closing filters');
     // Remettre toutes les cartes à l'état 'front'
     resetAllCards();
     // Fermer les filtres s'ils sont ouverts
@@ -769,14 +755,14 @@ const AlumniMap = () => {
 
   // useEffect séparé pour mettre à jour l'état des cartes quand selectedAlumni ou cardStates change
   useEffect(() => {
-    console.log('Re-rendering markers due to state change. CardStates:', cardStates);
+    //console.log('Re-rendering markers due to state change. CardStates:', cardStates);
     
     // Utiliser requestAnimationFrame pour éviter les race conditions
     requestAnimationFrame(() => {
       markersRef.current.forEach(marker => {
         if (marker.reactRoot && marker.alumni) {
           try {
-            console.log(`Updating marker for alumni ${marker.alumni.id}, state: ${getCardState(marker.alumni.id)}`);
+            //console.log(`Updating marker for alumni ${marker.alumni.id}, state: ${getCardState(marker.alumni.id)}`);
             // Recréer seulement le contenu React avec le nouvel état
             marker.reactRoot.render(
               <AlumniCard 
@@ -812,6 +798,7 @@ const AlumniMap = () => {
     setSelectedAlumni(null);
   };
 
+  // eslint-disable-next-line
   const handleContactAlumni = (alumni) => {
     // Ici vous pourrez ajouter la logique de contact
     // Par exemple : ouvrir un modal de contact, rediriger vers email, etc.
@@ -929,7 +916,7 @@ const AlumniMap = () => {
         style={{ height: '100%', width: '100%' }}
         onClick={(e) => {
           // Backup handler si le clic Leaflet ne fonctionne pas
-          console.log('Map container clicked', e.target);
+          //console.log('Map container clicked', e.target);
           // Seulement si le clic est directement sur le container de la carte
           if (e.target === mapRef.current || e.target.classList.contains('leaflet-container')) {
             handleMapClick();
@@ -951,7 +938,6 @@ const AlumniMap = () => {
         alumni={selectedAlumni}
         isOpen={isPanelOpen}
         onClose={closePanel}
-        onContactClick={handleContactAlumni}
       />
 
       {/* Bulles directionnelles pour indiquer les alumni hors-zone */}
