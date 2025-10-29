@@ -34,29 +34,37 @@ body {
 /* Image décorative "Découvrez nos alumnis" */
 .discover-alumni-overlay {
   position: absolute;
-  bottom: 10px;
-  left: 10px;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
   z-index: 1000;
   pointer-events: none; /* Purement décorative - pas d'interaction */
 }
 
 .discover-alumni-image {
-  max-width: 280px;
+  max-width: 320px;
   height: auto;
+  filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.3));
 }
 
 /* Responsive pour mobile */
 @media (max-width: 768px) {
+  .discover-alumni-overlay {
+    top: 15px;
+  }
   
   .discover-alumni-image {
-    max-width: 200px;
+    max-width: 220px;
   }
 }
 
 /* Très petits écrans */
 @media (max-width: 480px) {
+  .discover-alumni-overlay {
+    top: 10px;
+  }
   
   .discover-alumni-image {
-    max-width: 160px;
+    max-width: 180px;
   }
 }

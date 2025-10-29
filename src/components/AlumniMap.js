@@ -896,7 +896,7 @@ const AlumniMap = () => {
           </button>
         )}
 
-        {/* Indicateur du mode d'affichage */}
+        {/* Indicateur du nombre d'alumni */}
         <div style={{
           background: 'rgba(255,255,255,0.9)',
           padding: '8px 12px',
@@ -904,13 +904,6 @@ const AlumniMap = () => {
           fontSize: '12px',
           border: '1px solid #ddd'
         }}>
-          Mode: {
-            displayMode === 'country' ? 'Pays' : 
-            displayMode === 'region' ? 'Région' : 
-            displayMode === 'pins' ? 'Épingles' : 
-            'Cartes'
-          } | 
-          Zoom: {currentZoom} | 
           Alumni: {alumniData.length}
         </div>
       </div>
