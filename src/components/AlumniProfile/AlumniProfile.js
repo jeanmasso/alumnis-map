@@ -3,7 +3,6 @@ import './AlumniProfile.css';
 import { alumniImages } from '../../assets/images/alumni';
 
 const AlumniProfile = ({ alumni, isOpen, onClose }) => {
-  console.log('AlumniProfile rendered with:', { alumni: alumni?.name, isOpen });
   
   if (!alumni) return null;
 
@@ -100,6 +99,28 @@ const AlumniProfile = ({ alumni, isOpen, onClose }) => {
             Lng: {alumni.coordinates[1].toFixed(4)}
           </p>
         </div>
+
+        {/* Réseaux sociaux (optionnel) */}
+        {alumni.linkedin && (
+          <div className="profile-section social-links">
+            <h4>Réseaux sociaux</h4>
+            <div className="social-icons">
+              <div className="linkedin-info">
+                <img 
+                  src="/images/linkedin.png" 
+                  alt="LinkedIn" 
+                  style={{
+                    width: '16px',
+                    height: '16px',
+                    marginRight: '6px',
+                    verticalAlign: 'middle'
+                  }}
+                />
+                <span>@{alumni.linkedin}</span>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
