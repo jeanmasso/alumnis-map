@@ -53,6 +53,24 @@
       "center": [-21.1151, 165.6189],
       "bounds": [[-22.6982, 163.5647], [-19.5320, 167.6731]],
       "zoomLevel": 8
+    },
+    "Ile De La Réunion": {
+      "name": "Ile De La Réunion",
+      "center": [-21.1151, 55.5364],
+      "bounds": [[-21.3897, 55.2164], [-20.8717, 55.8367]],
+      "zoomLevel": 9
+    },
+    "Vanuatu": {
+      "name": "Vanuatu",
+      "center": [-15.3767, 166.9592],
+      "bounds": [[-20.2488, 166.5295], [-13.0739, 170.2647]],
+      "zoomLevel": 7
+    },
+    "Luxembourg": {
+      "name": "Luxembourg",
+      "center": [49.8153, 6.1296],
+      "bounds": [[49.4426, 5.7357], [50.1280, 6.5307]],
+      "zoomLevel": 9
     }
   }
 }
