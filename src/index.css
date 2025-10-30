@@ -5,6 +5,43 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  
+  /* Optimisations pour le plein écran */
+  overflow: hidden;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Styles pour le mode plein écran */
+html:fullscreen,
+html:-webkit-full-screen,
+html:-moz-full-screen,
+html:-ms-fullscreen {
+  background: #6B46C1;
+}
+
+html:fullscreen body,
+html:-webkit-full-screen body,
+html:-moz-full-screen body,
+html:-ms-fullscreen body {
+  width: 100vw;
+  height: 100vh;
+}
+
+/* PWA optimizations */
+html {
+  -webkit-text-size-adjust: 100%;
+  -ms-text-size-adjust: 100%;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
 }
 
 code {

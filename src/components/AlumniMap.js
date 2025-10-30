@@ -32,6 +32,7 @@ const AlumniMap = () => {
   const [error, setError] = useState(null);
   const [currentZoom, setCurrentZoom] = useState(3);
   const [displayMode, setDisplayMode] = useState('country'); // 'country', 'region', 'pins', 'individual'
+  const [isFullscreen, setIsFullscreen] = useState(false); // État du mode plein écran
   // États des cartes : 'front' (face) | 'back' (dos) | 'profile' (profil ouvert)
   const [cardStates, setCardStates] = useState(new Map()); // Map<alumniId, state>
   // eslint-disable-next-line no-unused-vars
@@ -782,6 +783,30 @@ const AlumniMap = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedAlumni, cardStates]);  // Ajouter cardStates pour déclencher re-rendu
 
+  // useEffect pour gérer l'état du mode plein écran
+  useEffect(() => {
+    const handleFullscreenChange = () => {
+      const isCurrentlyFullscreen = !!(
+        document.fullscreenElement ||
+        document.webkitFullscreenElement ||
+        document.msFullscreenElement
+      );
+      setIsFullscreen(isCurrentlyFullscreen);
+    };
+
+    // Écouter les changements d'état du plein écran
+    document.addEventListener('fullscreenchange', handleFullscreenChange);
+    document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
+    document.addEventListener('msfullscreenchange', handleFullscreenChange);
+
+    // Cleanup
+    return () => {
+      document.removeEventListener('fullscreenchange', handleFullscreenChange);
+      document.removeEventListener('webkitfullscreenchange', handleFullscreenChange);
+      document.removeEventListener('msfullscreenchange', handleFullscreenChange);
+    };
+  }, []);
+
   const returnToGlobalView = () => {
     // Retourner à la vue globale (zoom niveau 3)
     mapInstance.current.setView([20, 0], 3);
@@ -796,6 +821,18 @@ const AlumniMap = () => {
   const closePanel = () => {
     setIsPanelOpen(false);
     setSelectedAlumni(null);
+  };
+
+  // Fonction pour activer le mode plein écran
+  const requestFullscreen = () => {
+    const element = document.documentElement;
+    if (element.requestFullscreen) {
+      element.requestFullscreen();
+    } else if (element.webkitRequestFullscreen) { // Safari
+      element.webkitRequestFullscreen();
+    } else if (element.msRequestFullscreen) { // IE/Edge
+      element.msRequestFullscreen();
+    }
   };
 
   // eslint-disable-next-line
@@ -947,6 +984,48 @@ const AlumniMap = () => {
           {renderBubble('south')}
           {renderBubble('east')}
           {renderBubble('west')}
+        </div>
+      )}
+
+      {/* Bouton plein écran - Coin bas-gauche (affiché seulement quand pas en plein écran) */}
+      {!isFullscreen && (
+        <div style={{
+          position: 'absolute',
+          bottom: '20px',
+          left: '20px',
+          zIndex: 1000
+        }}>
+          <button
+            onClick={requestFullscreen}
+            title="Mode plein écran (F11)"
+            style={{
+              background: 'linear-gradient(135deg, #10B981 0%, #059669 100%)',
+              color: 'white',
+              border: 'none',
+              borderRadius: '8px',
+              padding: '12px 16px',
+              fontSize: '14px',
+              cursor: 'pointer',
+              fontWeight: '600',
+              boxShadow: '0 4px 12px rgba(16, 185, 129, 0.4)',
+              transition: 'all 0.3s ease',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px',
+              minWidth: '120px',
+              justifyContent: 'center'
+            }}
+            onMouseEnter={(e) => {
+              e.target.style.transform = 'translateY(-2px)';
+              e.target.style.boxShadow = '0 6px 16px rgba(16, 185, 129, 0.5)';
+            }}
+            onMouseLeave={(e) => {
+              e.target.style.transform = 'translateY(0)';
+              e.target.style.boxShadow = '0 4px 12px rgba(16, 185, 129, 0.4)';
+            }}
+          >
+          Plein écran
+          </button>
         </div>
       )}
     </div>
