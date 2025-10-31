@@ -1,63 +1,143 @@
-# Bien démarrer avec le projet Alumnis Map
+# 🗺️ Alumni Map - Carte Interactive des Diplômés de l'IUT NC
 
-## Description du projet
+## 📋 Description du projet
 
-**Alumnis Map** est une carte interactive présentant les anciens élèves de l'IUT de Nouvelle-Calédonie des 10 dernières années. Ce projet vise à valoriser leurs parcours et à offrir une visualisation intuitive de leurs réalisations et de leur localisation à travers le monde.
+**Alumni Map** est une application web interactive qui présente la géolocalisation des anciens étudiants de l'Institut Universitaire de Technologie de Nouvelle-Calédonie (IUT NC) des 10 dernières années. Cette carte permet de valoriser les parcours professionnels des diplômés et d'offrir une visualisation intuitive de leur répartition géographique mondiale.
 
-## Aperçu
+## ✨ Fonctionnalités principales
 
-![Capture d'écran de l'application](path/to/screenshot.png) <!-- Ajoutez une capture d'écran ici -->
+### 🎯 Navigation Interactive
+- **Système de zoom adaptatif** : 4 niveaux de zoom avec affichage dynamique (pays → régions → épingles → cartes individuelles)
+- **Bulles directionnelles** : Indicateurs pour naviguer vers des alumni situés hors de la zone visible
+- **Mode plein écran** : Interface immersive compatible PWA avec contrôle automatique de visibilité
 
-Vous pouvez explorer une version démo ici : [Lien vers la démo](https://demo-url.com) <!-- Ajoutez un lien vers la démo si disponible -->
+### 👤 Profils Alumni
+- **Cartes interactives** : Animation de retournement au survol avec informations détaillées
+- **Profils détaillés** : Panneau latéral avec informations complètes (poste, entreprise, promotion)
+- **Photos personnalisées** : System d'images avec fallback automatique
 
-## Récupération du projet
+### 🔍 Système de filtres
+- **Filtrage par promotion** : DUT-BUT MMI, GEA, LP CAN, etc.
+- **Filtrage par année** : Années de graduation
+- **Filtrage par localisation** : Pays et villes
+- **Interface burger menu** : Design mobile-first responsive
 
-Clonez le repository depuis GitHub :
+### 🌍 Données géographiques
+- **27 alumni** répartis dans 8 pays (Nouvelle-Calédonie, France, Vanuatu, etc.)
+- **Clustering intelligent** : Regroupement automatique par zones géographiques
+- **Géocodage précis** : Coordonnées GPS exactes pour chaque localisation
 
+## 🚀 Installation et démarrage
+
+### Prérequis
+- Node.js (version 14 ou supérieure)
+- npm ou yarn
+
+### Installation
 ```bash
+# Cloner le repository
 git clone https://github.com/jeanmasso/alumnis-map.git
 cd alumnis-map
+
+# Installer les dépendances
+npm install
+
+# Lancer l'application en développement
+npm start
 ```
 
-## Scripts disponibles
+L'application sera accessible sur [http://localhost:3000](http://localhost:3000)
 
-Dans le répertoire du projet, vous pouvez exécuter :
+## 🏗️ Architecture du projet
 
-### `npm start`
+```
+src/
+├── components/           # Composants React
+│   ├── AlumniMap.js     # Composant principal de la carte
+│   ├── AlumniCard.js    # Cartes des profils alumni
+│   ├── AlumniProfile.js # Panneau de profil détaillé
+│   ├── AlumniFilters.js # Système de filtres
+│   └── DirectionalBubbles/ # Bulles de navigation
+├── hooks/               # Hooks React personnalisés
+│   └── useDirectionalBubbles.js # Logique des bulles directionnelles
+├── services/            # Services et logique métier
+│   ├── alumniService.js # Gestion des données alumni
+│   └── geoService.js    # Services géographiques
+├── utils/               # Utilitaires
+│   └── geoBounds.js     # Calculs géographiques
+└── assets/              # Ressources statiques
+    └── images/alumni/   # Photos des alumni
+```
 
-Lance l'application en mode développement.\
-Ouvrez [http://localhost:3000](http://localhost:3000) pour la voir dans votre navigateur.
+### 📁 Données
+```
+public/data/
+├── alumni.json         # Base de données des alumni (27 profils)
+└── countries.json      # Référentiel géographique des pays
+```
 
-La page se rechargera lorsque vous apporterez des modifications.\
-Vous pourrez également voir les erreurs de lint dans la console.
+## 🛠️ Technologies utilisées
 
-### `npm test`
+### Frontend
+- **React 19.1.0** - Framework JavaScript
+- **Leaflet 1.9.4** - Cartes interactives
+- **React-Leaflet 5.0.0** - Intégration React/Leaflet
 
-Lance le test runner en mode interactif.\
-Consultez la section sur [l'exécution des tests](https://facebook.github.io/create-react-app/docs/running-tests) pour plus d'informations.
+### Cartes et géolocalisation
+- **OpenStreetMap** - Données cartographiques
+- **Leaflet.markercluster** - Clustering de marqueurs
+- **Système de coordonnées GPS** - Positionnement précis
 
-### `npm run build`
+### PWA et déploiement
+- **Progressive Web App** - Capacités mobiles avancées
+- **Netlify** - Hébergement et déploiement continu
+- **Create React App** - Configuration et build
 
-Construit l'application pour la production dans le dossier `build`.\
-Il regroupe correctement React en mode production et optimise la construction pour de meilleures performances.
+## 📱 Fonctionnalités PWA
 
-La construction est minifiée et les noms de fichiers incluent des hash.\
-Votre application est prête à être déployée !
+- ✅ **Mode plein écran** automatique sur mobile
+- ✅ **Installation en tant qu'app** native
+- ✅ **Icons adaptatives** pour différentes plateformes
+- ✅ **Optimisation performance** et cache
 
-Consultez la section sur [le déploiement](https://facebook.github.io/create-react-app/docs/deployment) pour plus d'informations.
+## 🎨 Interface utilisateur
 
-## En savoir plus
+### Design System
+- **Couleurs principales** : Violet (#6B46C1) et Vert (#10B981)
+- **Typographie** : Système de polices moderne et lisible
+- **Animations** : Transitions fluides et micro-interactions
+- **Responsive Design** : Optimisé mobile, tablette et desktop
 
-Vous pouvez en apprendre davantage dans la [documentation de Create React App](https://facebook.github.io/create-react-app/docs/getting-started).
+### Interactions
+- **Hover effects** : Élévation et changements de couleur
+- **Cartes flippables** : Animation 3D au survol
+- **Bulles tactiles** : Indication des zones hors-écran
+- **Navigation intuitive** : Zoom et pan naturels
 
-Pour apprendre React, consultez la [documentation de React](https://reactjs.org/).
+## 📊 Données des alumni
 
-## Technologies utilisées
+### Répartition géographique
+- **Nouvelle-Calédonie** : 18 alumni (67%)
+- **France** : 6 alumni (22%)
+- **Vanuatu, La Réunion, Canada, Luxembourg** : 3 alumni (11%)
 
-- **React** pour la construction de l'interface utilisateur.
-- **Leaflet** pour la gestion des cartes interactives.
-- **Bootstrap** pour le design et la mise en page.
-- **Node.js** (si applicable) pour le backend.
+### Formations représentées
+- **DUT-BUT GEA** : Gestion des Entreprises et Administrations
+- **DUT-BUT MMI** : Métiers du Multimédia et Internet
+- **LP CAN** : Licence Pro Communication et Numérique
+- **LP spécialisées** : Contrôle de gestion, Révision comptable, etc.
+
+## 🚀 Scripts disponibles
+
+```bash
+# Développement
+npm start          # Lance le serveur de développement
+
+# Production
+npm run build      # Build optimisé pour la production
+npm test           # Lance les tests
+npm run eject      # Éjecte la configuration CRA (non recommandé)
+```
 
 ## Contribution
 
@@ -105,7 +185,46 @@ Nous serions ravis que vous contribuiez à ce projet, même si vous débutez sur
 
 ---
 
-📬 Si vous avez des questions ou besoin d'aide, n'hésitez pas à nous contacter ou à consulter l'[aide GitHub pour les débutants](https://docs.github.com/fr/get-started/quickstart/contributing-to-projects).
+## 🌐 Déploiement
 
-Merci pour votre contribution ! 🙌
+Le projet est configuré pour un déploiement automatique sur Netlify :
+
+1. **Build automatique** : Déclenchement à chaque push sur master
+2. **Optimisations** : Minification, compression et cache
+3. **PWA ready** : Service workers et manifest configurés
+
+## 📈 Roadmap
+
+### Fonctionnalités prévues
+- [ ] **Recherche textuelle** : Recherche par nom, entreprise, ville
+- [ ] **Statistiques avancées** : Graphiques et données analytiques
+- [ ] **Export de données** : PDF, CSV des profils
+- [ ] **Mode sombre** : Thème alternatif
+- [ ] **Internationalisation** : Support multilingue
+
+### Améliorations techniques
+- [ ] **Tests automatisés** : Couverture complète des composants
+- [ ] **Performance** : Optimisation du chargement des images
+- [ ] **Accessibilité** : Conformité WCAG 2.1
+- [ ] **SEO** : Métadonnées et référencement
+
+## 📄 Licence
+
+Ce projet est sous licence MIT. Voir le fichier `LICENSE` pour plus de détails.
+
+## 👥 Équipe
+
+**Développement** : Jean Masso  
+**Données** : IUT de Nouvelle-Calédonie  
+**Design** : Interface moderne et responsive  
+
+## 📞 Contact
+
+- **Repository** : [https://github.com/jeanmasso/alumnis-map](https://github.com/jeanmasso/alumnis-map)
+- **Issues** : [Signaler un problème](https://github.com/jeanmasso/alumnis-map/issues)
+- **Démo live** : [Version déployée](https://votre-url-netlify.netlify.app) <!-- À remplacer par l'URL réelle -->
+
+---
+
+*Développé avec ❤️ pour valoriser les parcours des diplômés de l'IUT NC*
 
